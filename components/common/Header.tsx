@@ -12,7 +12,7 @@ import AuthForm from "./auth-form";
 const Header = async () => {
   const session = await auth();
   const user = session?.user as User;
-  // const role = user?.role as Role;
+  //const role = user?.role as Role;
 
   return (
     <header className='sticky top-0 z-10 rounded-md bg-white shadow-sm dark:bg-black'>
