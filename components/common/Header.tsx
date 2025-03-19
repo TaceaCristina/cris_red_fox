@@ -28,7 +28,7 @@ const Header = async () => {
                 <div className='flex items-center space-x-3 md:space-x-6'>
                   {user? (
                     <>
-                      <AvatarNav />
+                      <AvatarNav user = {user}/>
                       <NotifyBtn />
                       <BasketItem />
                     </>
