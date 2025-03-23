@@ -1,28 +1,35 @@
-import { logoutAction } from "@/app/actions/authActions"; // Import corect din noul fișier
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { LuLogOut } from "react-icons/lu";
+// Create a new client component for sign out functionality
+// components/common/ClientLogOutBtn.tsx
+'use client'
 
-const LogOutButton = ({ withTooltip = false }) => {
+import { signOut } from "next-auth/react";
+import { LuLogOut } from "react-icons/lu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+
+const LogOutBtn = ({ withTooltip = false }) => {
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
+
   return withTooltip ? (
-    <form action={logoutAction}>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button className="rounded-full bg-slate-100 p-1 dark:bg-slate-300 dark:text-slate-700">
-              <LuLogOut size={20} />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <button type="submit">Log Out</button>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </form>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button 
+            onClick={handleSignOut}
+            className="rounded-full bg-slate-100 p-1 dark:bg-slate-300 dark:text-slate-700"
+          >
+            <LuLogOut size={20} />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Log Out</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   ) : (
-    <form action={logoutAction}>
-      <button type="submit">LogOut</button>
-    </form>
+    <button onClick={handleSignOut}>LogOut</button>
   );
 };
 
-export default LogOutButton;
+export default LogOutBtn;

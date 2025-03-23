@@ -1,3 +1,4 @@
+"use client"
 
 import React, { createElement } from "react";
 import Link from "next/link";
@@ -49,7 +50,7 @@ export default function NavItem({href, title, icon, showTooltip}:NavItemProps) {
         ) : (
           <>
             <span>
-              {createElement(icon, {
+              {React.createElement(icon, {
                 size: 20,
               })}
             </span>

@@ -1,6 +1,6 @@
 "use server";
 
-import { signOut } from "@/auth";
+import { signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 export async function logoutAction() {

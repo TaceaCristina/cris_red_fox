@@ -53,7 +53,7 @@ const SideBarDrawer = ({ role }: { role: Role }) => {
             <Separator className="my-4" />
             <div className="space-y-3 p-4">
                 <ThemeToggle/>
-                <LogOutButton withTooltip/>
+                            <LogOutButton withTooltip/>
             </div>
             </DrawerContent>
         </Drawer>

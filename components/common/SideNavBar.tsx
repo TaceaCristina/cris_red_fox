@@ -14,14 +14,17 @@ interface SideBarProps extends React.HTMLAttributes<HTMLElement> {
 
 export default function SideNavBar({
   className,
-  items,
+  items = [], // valoare implicită în caz că items este undefined
   showTooltip,
   ...props
-}: SideBarProps) {
+}: SideBarProps) {  
+  // Verifică dacă items este un array și convertește la array dacă nu este
+  const safeItems = Array.isArray(items) ? items : [];
+  
   return (
     <ScrollArea className="mt-8 h-[70vh]">
       <nav className={cn("flex flex-col space-y-6", className)} {...props}>
-        {items.map((item) => (
+        {safeItems.map((item) => (
           <NavItem key={item.href} {...item} showTooltip={showTooltip} />
         ))}
       </nav>

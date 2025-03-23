@@ -4,7 +4,6 @@ import SideBarDrawer from "./SideBarDrawer";
 import { Role } from "@prisma/client";
 import NotifyBtn from "./NotifyBtn";
 import { AvatarNav } from "./AvatarNav";
-import { Container } from "lucide-react";
 
 
 const DashHeader = async ({ title }: { title: string }) => {
@@ -12,8 +11,7 @@ const DashHeader = async ({ title }: { title: string }) => {
   const user = session?.user as User;
   const role = user?.role as Role;
   return (
-    <Container>
-      <div className="flex items-center justify-between bg-white p-3 dark:bg-black">
+    <div className="flex items-center justify-between bg-white p-3 dark:bg-black">
       <div className="flex items-center justify-start">
         <div className="md:hidden">
           <SideBarDrawer role={role} />
@@ -28,7 +26,6 @@ const DashHeader = async ({ title }: { title: string }) => {
         <NotifyBtn />
       </div>
     </div>
-    </Container>
   );
 };
 

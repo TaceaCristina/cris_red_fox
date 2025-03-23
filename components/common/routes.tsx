@@ -32,7 +32,7 @@ export const InstructorRoutes = [
     icon: TbMessage,
   },
   {
-    title: "Settings",
+    title: "Setări",
     href: "/portal/settings",
     icon: IoSettingsOutline,
   },
@@ -65,12 +65,12 @@ export const AdminRoutes = [
     icon: BsStopwatch,
   },
   {
-    title: "Bookings",
+    title: "Programări",
     href: "/dashboard/bookings",
     icon: MdOutlineMenuBook,
   },
   {
-    title: "Settings",
+    title: "Setări",
     href: "/dashboard/settings",
     icon: IoSettingsOutline,
   },
