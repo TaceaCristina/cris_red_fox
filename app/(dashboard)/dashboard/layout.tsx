@@ -11,11 +11,13 @@ export default async function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log("Using routes:", AdminRoutesImport);
+
   return (
     <div className="flex min-h-screen bg-orange-50 dark:bg-black">
       <aside className="hidden w-16 bg-white p-4 dark:bg-black md:block">
         <Image src="/img/logo.png" width={50} height={50} alt="logo" />
-        <SideNavBar items={Array.isArray(AdminRoutesImport) ? AdminRoutesImport : []} showTooltip />
+        <SideNavBar items={AdminRoutesImport} showTooltip />
         <ThemeToggle />
         <Separator className="my-4" />
         <LogOutBtn withTooltip />

@@ -50,7 +50,7 @@ export default function NavItem({href, title, icon, showTooltip}:NavItemProps) {
         ) : (
           <>
             <span>
-              {React.createElement(icon, {
+              {createElement(icon, {
                 size: 20,
               })}
             </span>
