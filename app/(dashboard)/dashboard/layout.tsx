@@ -11,8 +11,7 @@ export default async function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("Using routes:", AdminRoutesImport);
-
+  
   return (
     <div className="flex min-h-screen bg-orange-50 dark:bg-black">
       <aside className="hidden w-16 bg-white p-4 dark:bg-black md:block">

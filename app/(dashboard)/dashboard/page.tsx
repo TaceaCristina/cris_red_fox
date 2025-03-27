@@ -1,6 +1,6 @@
 const DashBoardPage = () => {
     return (
-        <div>Admin DashBoard</div>
+        <div>Admin DashBoardPage</div>
     )
 }
 
