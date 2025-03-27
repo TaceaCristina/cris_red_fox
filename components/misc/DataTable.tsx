@@ -32,22 +32,20 @@ import {
 import { RxMixerHorizontal } from "react-icons/rx";
 import { DataTablePagination } from "./table-pagination";
 
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  search?: string
+  search?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns, 
   data,
-  search = '' //This should always be in lowercase and is should match a column name in the database 
+  search = '' 
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  // const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data,
@@ -63,22 +61,26 @@ export function DataTable<TData, TValue>({
       sorting,
       columnFilters,
       columnVisibility,
-      // rowSelection,
     },
   });
+
+  // Add a safety check for search functionality
+  const searchColumn = search ? table.getColumn(search.toLowerCase()) : null;
 
   return (
     <>
       {/* Search & Filter View  */}
-      <div className="flex flex-col my-4  gap-4 justify-start md:flex-row  md:justify-between ">
-        <Input
-          placeholder={`Search by ${search}...`}
-          value={(table.getColumn(`${search}`)?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn(`${search}`)?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+      <div className="flex flex-col my-4 gap-4 justify-start md:flex-row md:justify-between">
+        {searchColumn && (
+          <Input
+            placeholder={`Search by ${search}...`}
+            value={(searchColumn.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              searchColumn.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        )}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -109,9 +111,9 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table View  */}
-      <div className="  rounded-md   bg-white dark:bg-black">
+      <div className="rounded-md bg-white dark:bg-black">
         <Table>
-          <TableHeader className="sticky top-0 z-10 bg-white  dark:bg-slate-900">
+          <TableHeader className="sticky top-0 z-10 bg-white dark:bg-slate-900">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
