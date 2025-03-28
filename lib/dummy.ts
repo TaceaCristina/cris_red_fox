@@ -1,70 +1,66 @@
 export const drivingLocations = [
     {
-      value: "bondi",
-      label: "Bondi",
+        value: "aviatorilor",
+        label: "Aviatorilor",
     },
     {
-      value: "bronte",
-      label: "Bronte",
+        value: "baneasa",
+        label: "Băneasa",
     },
     {
-      value: "clovelly",
-      label: "Clovelly",
+        value: "berceni",
+        label: "Berceni",
     },
     {
-      value: "coogee",
-      label: "Coogee",
+        value: "colentina",
+        label: "Colentina",
     },
     {
-      value: "dover-heights",
-      label: "Dover Heights",
+        value: "dorobanti",
+        label: "Dorobanți",
     },
     {
-      value: "double-bay",
-      label: "Double Bay",
+        value: "dristor",
+        label: "Dristor",
     },
     {
-      value: "edgecliff",
-      label: "Edgecliff",
+        value: "drumul-taberei",
+        label: "Drumul Taberei",
     },
     {
-      value: "kingsford",
-      label: "Kingsford",
+        value: "ferentari",
+        label: "Ferentari",
     },
     {
-      value: "maroubra",
-      label: "Maroubra",
+        value: "floreasca",
+        label: "Floreasca",
     },
     {
-      value: "paddington",
-      label: "Paddington",
+        value: "militari",
+        label: "Militari",
     },
     {
-      value: "point-piper",
-      label: "Point Piper",
+        value: "pantelimon",
+        label: "Pantelimon",
     },
     {
-      value: "randwick",
-      label: "Randwick",
+        value: "pipera",
+        label: "Pipera",
     },
     {
-      value: "rose-bay",
-      label: "Rose Bay",
+        value: "rahova",
+        label: "Rahova",
     },
     {
-      value: "tamarama",
-      label: "Tamarama",
+        value: "tineretului",
+        label: "Tineretului",
     },
     {
-      value: "vaucluse",
-      label: "Vaucluse",
+        value: "titan",
+        label: "Titan",
     },
     {
-      value: "waverley",
-      label: "Waverley",
-    },
-    {
-      value: "woollahra",
-      label: "Woollahra",
+        value: "vitan",
+        label: "Vitan",
     }
-  ];
+];

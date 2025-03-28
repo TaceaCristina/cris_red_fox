@@ -63,7 +63,7 @@ export default function ContactDetailsForm({ id }: {id: string}) {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Your Name.</FormDescription>
+              <FormDescription>Numele tău.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -81,7 +81,7 @@ export default function ContactDetailsForm({ id }: {id: string}) {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Your phone number.</FormDescription>
+              <FormDescription>Numărul tău de telefon.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -99,14 +99,14 @@ export default function ContactDetailsForm({ id }: {id: string}) {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Your pick-up address.</FormDescription>
+              <FormDescription>Adresa ta.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
         <LoadingBtn type="submit" className="w-full" loading={isSubmitting}>
-          Add
+          Adaugă
         </LoadingBtn>
       </form>
     </Form>

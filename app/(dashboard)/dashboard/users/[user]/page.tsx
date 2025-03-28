@@ -34,7 +34,7 @@ export default async function AddInstructorPage({
       <main className="m-auto my-10 max-w-3xl space-y-10 rounded-md bg-white dark:bg-black">
         <div className="space-y-5 text-center">
           <h1 className="py-3 text-xl font-semibold">
-            Aaugă profilul instructorului: {currentName}
+            Adaugă profilul instructorului: {currentName}
           </h1>
         </div>
         <div className="space-y-6 rounded-lg p-4">

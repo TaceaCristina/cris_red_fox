@@ -107,7 +107,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Nume</FormLabel>
+                                <FormLabel>Nume profesional</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
@@ -120,7 +120,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                         name="email" 
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>Email de serviciu</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
@@ -133,7 +133,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                         name="phone"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Telefon</FormLabel>
+                                <FormLabel>Telefon de serviciu</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
