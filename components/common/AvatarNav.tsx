@@ -38,7 +38,7 @@ export function AvatarNav({user}: {user: User})
                 <DropdownMenuSeparator/>
                 <DropdownMenuItem className="flex gap-2">
                     <HiOutlineUser size={18} />
-                    <Link href="/user">Profile</Link>
+                    <Link href="/user">Profil</Link>
                 </DropdownMenuItem>
 
                 {user?.role === "ADMIN" && (
