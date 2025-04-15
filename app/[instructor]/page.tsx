@@ -8,14 +8,14 @@ import Footer from "@/components/common/Footer";
 
 
 export default async function Home({
-    searchParams,
+    params,
 } : {
-    searchParams: { [key: string]: string | string[] | undefined};
+    params: { [key: string]: string | string[] | undefined};
 }) {
     const session = await getSession();
     const user = session?.user as User;
 
-    const id = searchParams.id as string;
+    const id = params.id as string;
 
     const instructor = await getInstructor({ id });
 
