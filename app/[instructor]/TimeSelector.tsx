@@ -74,7 +74,7 @@ const TimeSelector = ({
     }
 
     let cost;
-    if (lessonType === " CONDUS") {
+    if (lessonType === " DRIVING") {
       cost = dcost;
     } else {
       cost = lcost;
@@ -124,7 +124,7 @@ const TimeSelector = ({
               onClick={() => handleTimeClick(time)}
             >
               {time.getHours().toString().padStart(2, "0")}:
-              {time.getMinutes().toString().padStart(2, "0")} hrs
+              {time.getMinutes().toString().padStart(2, "0")}
             </Button>
           ))}
         </ScrollArea>
@@ -150,7 +150,7 @@ const TimeSelector = ({
           disabled={selectedTimesForDate.length === 0}
           onClick={submitBooking}
         >
-          Programează lecțiile de {lessonType}
+          Programează
         </Button>
       </div>
     </div>

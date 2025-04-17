@@ -27,8 +27,8 @@ export default function LessonTypeSelector() {
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Selectează tipul ședinței</SelectLabel>
-            <SelectItem value="CONDUS">CONDUS</SelectItem>
-            <SelectItem value="ÎNVĂȚARE">ÎNVĂȚARE</SelectItem>
+            <SelectItem value="DRIVING">CONDUS</SelectItem>
+            <SelectItem value="LEARNERS">ÎNVĂȚARE</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

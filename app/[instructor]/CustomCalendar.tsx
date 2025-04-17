@@ -71,7 +71,7 @@ const CustomCalendar = () => {
                       today && "bg-rose-600 text-white ",
                       selectedDate &&
                         selectedDate.isSame(date, "day") &&
-                        "bg-red-500 text-white",
+                        "bg-pink-500 text-white",
                       "h-8 w-8 p-1 grid place-content-center font rounded-full"
                     )}
                     onClick={() => {
