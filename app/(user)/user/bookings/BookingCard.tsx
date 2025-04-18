@@ -66,10 +66,10 @@ const BookingCard = ({ booking, img, name, phone }: BookingCardProps) => {
       </CardContent>
       <CardFooter>
         <p className="font-mono">
-          Numărul rezervării:{" "}
+          Numărul ședinței:{" "}
           <span className="font-bold">{booking.bookingNumber} </span>
         </p>
-      </CardFooter>
+      </CardFooter> 
     </Card>
   );
 };

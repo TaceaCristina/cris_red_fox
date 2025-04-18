@@ -83,7 +83,7 @@ import {
             set(INITIAL_STATE);
           },
         }),
-        { name: "programări", skipHydration: true },
+        { name: "ședințe", skipHydration: true },
       ),
     ),
   );

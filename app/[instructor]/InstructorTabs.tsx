@@ -29,7 +29,7 @@ export function InstructorTabs({
     <Tabs defaultValue="booking" className="">
       <TabsList className="my-12 grid w-full grid-cols-2">
         <TabsTrigger value="services">Servicii</TabsTrigger>
-        <TabsTrigger value="booking">Programări</TabsTrigger>
+        <TabsTrigger value="booking">Ședințe</TabsTrigger>
       </TabsList>
       <TabsContent value="services">
         <ServicesRendered services={services} />

@@ -22,12 +22,12 @@ export const InstructorRoutes = [
     icon: MdImportantDevices,
   },
   {
-    title: "Programări",
+    title: "Ședințe",
     href: "/portal/bookings",
     icon: MdOutlineMenuBook,
   },
   {
-    title: "Mesaje",
+    title: "Notificări",
     href: "/portal/messages",
     icon: TbMessage,
   },
@@ -60,12 +60,12 @@ export const AdminRoutes = [
     icon: LiaChalkboardTeacherSolid,
   },
   {
-    title: "Intervale de timp",
+    title: "Intervale orare",
     href: "/dashboard/timeslots",
     icon: BsStopwatch,
   },
   {
-    title: "Programări",
+    title: "Ședințe",
     href: "/dashboard/bookings",
     icon: MdOutlineMenuBook,
   },
@@ -88,12 +88,12 @@ export const UserRoutes = [
     icon: HiOutlineUser,
   },
   {
-    title: "Programări",
+    title: "Ședințe",
     href: "/user/bookings",
     icon: MdOutlineMenuBook,
   },
   {
-    title: "Mesaje",
+    title: "Notificări",
     href: "/user/messages",
     icon: TbMessage,
   },
