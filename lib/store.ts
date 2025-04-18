@@ -30,7 +30,7 @@ import {
     devtools(
       persist(
         (set, get) => ({
-          lessonType: "DRIVING", // Initial state
+          lessonType: "CONDUS", // Initial state
   
           setLessonType: (value) => {
             set({ lessonType: value });
