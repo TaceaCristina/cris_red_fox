@@ -30,14 +30,14 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
         onCheckedChange={(value: any) =>
           table.toggleAllPageRowsSelected(!!value)
         }
-        aria-label="Select all"
+        aria-label="Selectează tot"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="Selectează rând"
       />
     ),
     enableSorting: false,
@@ -45,7 +45,7 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
   },
   {
     accessorKey: "type",
-    header: "Lesson Type",
+    header: "Tipul ședinței",
     cell: ({ row }) => {
       const { type } = row.original;
       return <Badge>{type}</Badge>;
@@ -71,7 +71,7 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Created",
+    header: "Creat",
     cell: ({ row }) => {
       const { createdAt } = row.original;
       const displayDate = dayjs(createdAt).format("DD-MM-YYYY : HH:mm:ss");
@@ -80,7 +80,7 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
   },
   {
     accessorKey: "updatedAt",
-    header: "Updated",
+    header: "Actualizat",
     cell: ({ row }) => {
       const { updatedAt } = row.original;
       const displayDate = dayjs(updatedAt).format("DD-MM-YYYY : HH:mm:ss");
@@ -88,7 +88,7 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
     },
   },
   {
-    header: "View",
+    header: "Vizualizează",
     cell: ({ row }) => {
       const { times } = row.original;
 
@@ -96,13 +96,13 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
         <DialogWrapper
           isBtn={false}
           icon={IoEyeOutline}
-          title="Booking Times"
-          descr="Time Slots Added"
+          title="Ședințe programate"
+          descr="Intervale orare adăugate"
         >
           <div className="mt-2">
             {times.map((time, index) => (
               <Badge key={index} variant="outline">
-                {format(time, "HH:mm")}hrs
+                {format(time, "HH:mm")}
               </Badge>
             ))}
           </div>

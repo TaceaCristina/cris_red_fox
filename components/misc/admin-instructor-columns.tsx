@@ -43,7 +43,7 @@ export const instructorColumns: ColumnDef<Instructor>[] = [
   },
   {
     accessorKey: "img",
-    header: "Image",
+    header: "Imagine",
     cell: ({ row }) => (
       <Avatar>
         <AvatarImage src={row.original.img as string} alt="avatar" />

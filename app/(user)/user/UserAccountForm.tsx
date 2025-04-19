@@ -85,7 +85,7 @@ const UserAccountForm = ({ user, id }: { user: User; id: string }) => {
                 Telefon
               </FormLabel>
               <FormControl>
-                <Input placeholder="jajjs" {...field} />
+                <Input placeholder="" {...field} />
               </FormControl>
               <FormDescription>Numărul tău de telefon.</FormDescription>
               <FormMessage />

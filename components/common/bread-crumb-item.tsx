@@ -26,7 +26,7 @@ export function BreadCrumbItem() {
             <Breadcrumb className="mt-3 rounded-md bg-white p-5 dark:bg-slate-800">
                 <BreadcrumbList>
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                        <BreadcrumbLink href="/">Acasă</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     {itemsExceptLast.map((item) => (

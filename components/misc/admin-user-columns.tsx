@@ -44,7 +44,7 @@ export const userColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "image",
-    header: "Image",
+    header: "Imagine",
     cell: ({ row }) => {
       const { image } = row.original;
       return (
@@ -55,7 +55,7 @@ export const userColumns: ColumnDef<User>[] = [
       );
     },
   },
-  { accessorKey: "name", header: "Name" },
+  { accessorKey: "name", header: "Nume" },
   {
     accessorKey: "email",
     header: ({ column }) => (
@@ -68,28 +68,28 @@ export const userColumns: ColumnDef<User>[] = [
       </Button>
     ),
   },
-  { accessorKey: "role", header: "Role" },
+  { accessorKey: "role", header: "Rol" },
   {
     accessorKey: "createdAt",
-    header: "Created",
+    header: "Creat",
     cell: ({ row }) => (
       <div>{dayjs(row.original.createdAt).format("DD-MM-YYYY : HH:mm:ss")}</div>
     ),
   },
   {
     accessorKey: "updatedAt",
-    header: "Updated",
+    header: "Actualizat",
     cell: ({ row }) => (
       <div>{dayjs(row.original.updatedAt).format("DD-MM-YYYY : HH:mm:ss")}</div>
     ),
   },
   {
     accessorKey: "id",
-    header: "Edit Role",
+    header: "Editează rolul",
     cell: ({ row }) => <EditRole id={row.original.id} role={row.original.role} />,
   },
   {
-    header: "Actions",
+    header: "Acțiuni",
     cell: ({ row }) => {
       const { role, id, name } = row.original;
       return (

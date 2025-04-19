@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
       <div className="flex flex-col my-4 gap-4 justify-start md:flex-row md:justify-between">
         {searchColumn && (
           <Input
-            placeholder={`Search by ${search}...`}
+            placeholder={`Caută după ${search}...`}
             value={(searchColumn.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               searchColumn.setFilterValue(event.target.value)
@@ -85,7 +85,7 @@ export function DataTable<TData, TValue>({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="max-w-xs">
-              <RxMixerHorizontal /> View
+              <RxMixerHorizontal /> Vizualizează
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

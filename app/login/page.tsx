@@ -4,12 +4,15 @@ import AuthForm from "@/components/common/auth-form";
 import { getPathname } from "@/lib/utils";
 
 interface LoginPageProps {
-  searchParams: {
+  searchParams: Promise<{
     callbackUrl?: string;
-  };
+  }>;
 }
 
-const LoginPage = ({ searchParams: { callbackUrl } }: LoginPageProps) => {
+async function LoginPage({ searchParams }: LoginPageProps) {
+  // Așteaptă searchParams înainte de a accesa proprietățile
+  const resolvedSearchParams = await searchParams;
+  const callbackUrl = resolvedSearchParams?.callbackUrl;
   const pathname = getPathname(callbackUrl);
 
   return (
@@ -27,25 +30,25 @@ const LoginPage = ({ searchParams: { callbackUrl } }: LoginPageProps) => {
         <AuthForm callbackUrl={pathname} />
 
         <p className="px-8 text-center text-sm text-muted-foreground">
-          By clicking continue, you agree to the company{" "}
+        Prin continuarea autentificării, accepți{" "}
           <Link
             href="/terms"
             className="underline underline-offset-4 hover:text-primary"
           >
-            Terms of Service
+            Termenii și condițiile
           </Link>{" "}
-          and{" "}
+          și{" "}
           <Link
             href="/privacy"
             className="underline underline-offset-4 hover:text-primary"
           >
-            Privacy Policy
-          </Link>
-          .
+            Politica de confidențialitate
+          </Link>{" "}
+          ale companiei.
         </p>
       </div>
     </div>
   );
-};
+}
 
 export default LoginPage;
