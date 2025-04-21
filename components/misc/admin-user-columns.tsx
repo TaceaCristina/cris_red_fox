@@ -18,6 +18,13 @@ import { Checkbox } from "../ui/checkbox";
 import Link from "next/link";
 import EditRole from "./EditRole";
 
+import { suspendUser } from "@/app/(dashboard)/dashboard/users/[user]/actions";
+import { useRouter } from "next/navigation";
+
+import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
+import { checkInstructorHasProfile } from "@/actions/userActions";
+
 
 export const userColumns: ColumnDef<User>[] = [
   {
@@ -88,10 +95,38 @@ export const userColumns: ColumnDef<User>[] = [
     header: "Editează rolul",
     cell: ({ row }) => <EditRole id={row.original.id} role={row.original.role} />,
   },
+  // În componenta de coloană pentru "Acțiuni" din admin-user-columns.tsx
   {
     header: "Acțiuni",
     cell: ({ row }) => {
       const { role, id, name } = row.original;
+      const router = useRouter();
+      
+      // Funcție pentru a verifica dacă utilizatorul este instructor și are profil
+      const [hasInstructorProfile, setHasInstructorProfile] = useState(false);
+      
+      // Verifică dacă utilizatorul instructor are deja un profil
+      useEffect(() => {
+        const checkInstructorProfile = async () => {
+          if (role === "INSTRUCTOR") {
+            try {
+              // Presupunem că avem o acțiune server care verifică existența profilului
+              const response = await checkInstructorHasProfile(id);
+              setHasInstructorProfile(response.hasProfile);
+            } catch (error) {
+              console.error("Eroare la verificarea profilului instructorului:", error);
+            }
+          }
+        };
+        
+        checkInstructorProfile();
+      }, [id, role]);
+      
+      // Nu afișa nimic pentru utilizatorii ADMIN
+      if (role === "ADMIN") {
+        return null;
+      }
+      
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -101,21 +136,45 @@ export const userColumns: ColumnDef<User>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {role === "INSTRUCTOR" && (
+            <DropdownMenuLabel>Acțiuni</DropdownMenuLabel>
+            
+            {/* Pentru INSTRUCTOR, afișează opțiunea de adăugare profil doar dacă nu are deja profil */}
+            {role === "INSTRUCTOR" && !hasInstructorProfile && (
               <DropdownMenuItem>
                 <Link href={`/dashboard/users/${id}?name=${name}`}>
                   Adaugă profilul instructorului
                 </Link>
               </DropdownMenuItem>
             )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
+            
+            {/* Separator doar dacă există opțiunea de adăugare profil */}
+            {role === "INSTRUCTOR" && !hasInstructorProfile && <DropdownMenuSeparator />}
+            
+            {/* Opțiunea de suspendare pentru toți utilizatorii non-ADMIN */}
+            <DropdownMenuItem
+              className="cursor-pointer text-red-600"
+              onClick={async () => {
+                const confirmSuspend = confirm(`Sigur vrei să suspenzi utilizatorul ${name}?`);
+                if (!confirmSuspend) return;
+
+                try {
+                  const result = await suspendUser(id);
+                  if (result.success) {
+                    router.refresh(); // reîncarcă pagina curentă
+                    toast.success("Utilizatorul a fost suspendat cu succes");
+                  } else {
+                    throw new Error(result.message);
+                  }
+                } catch (err: any) {
+                  toast.error("Eroare: " + (err?.message || "Nu s-a putut suspenda utilizatorul."));
+                }
+              }}
+            >
               Suspendă Utilizatorul
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
     },
-  },
+}
 ];

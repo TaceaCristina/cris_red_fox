@@ -7,6 +7,9 @@ import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { InstructorSchema } from "@/lib/zod-validations";
 
+import getSession from "@/lib/getSession"; // <-- asigură-te că importi corect
+
+
 type AddInstructorArgs = {
   formData: FormData;
   areas: string[];
@@ -66,4 +69,57 @@ export async function AddInstructor({
   });
 
   redirect("/dashboard/instructors");
+}
+
+export async function suspendUser(userId: string) {
+  try {
+    const session = await getSession();
+
+    if (!session || !session.user || session.user.role !== "ADMIN") {
+      throw new Error("Neautorizat");
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new Error("Utilizatorul nu există");
+    }
+
+    if (user.role === "ADMIN") {
+      throw new Error("Nu poți suspenda un administrator");
+    }
+
+    // Verifică dacă utilizatorul este instructor
+    if (user.role === "INSTRUCTOR") {
+      // Verifică dacă există un profil de instructor și șterge-l dacă există
+      const instructorProfile = await prisma.instructor.findFirst({
+        where: { userId: userId }
+      });
+
+      if (instructorProfile) {
+        // Șterge orice înregistrări legate de instructor
+        // Șterge mai întâi fiecare TimeSlot asociat instructorului
+        await prisma.timeSlots.deleteMany({
+          where: { instructorId: instructorProfile.id }
+        });
+        
+        // Apoi șterge profilul instructorului
+        await prisma.instructor.delete({
+          where: { id: instructorProfile.id }
+        });
+      }
+    }
+
+    // Șterge utilizatorul
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+
+    return { success: true, message: "Utilizatorul a fost suspendat cu succes" };
+  } catch (error: any) {
+    return { 
+      success: false, 
+      message: error.message || "A apărut o eroare la suspendarea utilizatorului" 
+    };
+  }
 }
