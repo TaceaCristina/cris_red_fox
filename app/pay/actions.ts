@@ -132,7 +132,7 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
   }
 
   if (recipients.length > 0) {
-    await knock.workflows.trigger("booking-placed", {
+    await knock.workflows.trigger("sedinta-programata", {
       actor: {
         id: userId,
         name: session?.user?.name ?? "Anonymous",

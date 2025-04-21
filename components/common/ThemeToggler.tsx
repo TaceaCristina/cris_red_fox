@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import {
@@ -15,7 +16,7 @@ import { HardDrive, Moon, Sun } from "lucide-react";
 type ThemeValue = "system" | "light" | "dark";
 
 export default function ThemeToggle() {
-  const { systemTheme, theme, setTheme } = useTheme();
+  const { resolvedTheme, theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,7 +25,8 @@ export default function ThemeToggle() {
 
   if (!mounted) return null; // Avoid rendering on the server
 
-  const currentTheme = theme === "system" ? systemTheme : theme;
+  // Use resolvedTheme instead of calculating currentTheme
+  const currentTheme = resolvedTheme || "system";
 
   const renderButton = () => {
     const isDarkMode = currentTheme === "dark";
@@ -34,14 +36,17 @@ export default function ThemeToggle() {
       : "rounded-full bg-slate-100 p-1";
 
     return (
-      <button className={buttonClasses} onClick={() => setTheme(isDarkMode ? "light" : "dark")}>
+      <button className={buttonClasses}>
         <Icon size={20} />
       </button>
     );
   };
 
   const renderMenuItem = (themeValue: ThemeValue, Icon: React.ElementType, label: string) => (
-    <DropdownMenuItem className="flex items-center gap-3" onClick={() => setTheme(themeValue)}>
+    <DropdownMenuItem
+      className="flex items-center gap-3"
+      onClick={() => setTheme(themeValue)}
+    >
       <Icon size={20} />
       <span>{label}</span>
     </DropdownMenuItem>
@@ -51,11 +56,11 @@ export default function ThemeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{renderButton()}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-32">
-        <DropdownMenuLabel>Choose Theme</DropdownMenuLabel>
+        <DropdownMenuLabel>Alege tema</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {renderMenuItem("system", HardDrive, "System")}
-        {renderMenuItem("light", Sun, "Light")}
-        {renderMenuItem("dark", Moon, "Dark")}
+        {renderMenuItem("system", HardDrive, "Sistem")}
+        {renderMenuItem("light", Sun, "Luminoasă")}
+        {renderMenuItem("dark", Moon, "Întunecată")}
       </DropdownMenuContent>
     </DropdownMenu>
   );
