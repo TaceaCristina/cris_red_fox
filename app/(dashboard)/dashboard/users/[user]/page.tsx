@@ -19,7 +19,9 @@ export default async function AddInstructorPage({
   }
 
   const id = params.user;
-  const currentName = searchParams.name; // User's curent name to be changed to instructor
+  const currentName = Array.isArray(searchParams.name)
+  ? searchParams.name[0]
+  : searchParams.name ?? "";
 
   const getIsInstructor = await getUser({ id });
   const isInstructor = getIsInstructor?.instructor;

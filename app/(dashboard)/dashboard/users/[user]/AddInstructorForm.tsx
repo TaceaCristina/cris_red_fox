@@ -331,9 +331,9 @@ const AddInstructorForm = ({ userId }: Props) => {
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>Tipul de transmisie</SelectLabel>
-                                                <SelectItem value="manuală">Manuală</SelectItem>
-                                                <SelectItem value="automată">Automată</SelectItem>
-                                                <SelectItem value="ambele">Manuală și automată</SelectItem>
+                                                <SelectItem value="manual">Manuală</SelectItem>
+                                                <SelectItem value="automatic">Automată</SelectItem>
+                                                <SelectItem value="both">Manuală și automată</SelectItem>
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>

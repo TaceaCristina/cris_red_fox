@@ -48,10 +48,10 @@ const InstructorInfo = ({ instructor }: { instructor: Instructor }) => {
         <Separator className="my-4" />
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <InfoRow
+          {/* <InfoRow
             icon={<IoStar className="text-red-500" size={18} />}
             text={`${instructor?.rating} (${instructor?.ratingCount})`}
-          />
+          /> */}
           {instructor?.certificate && (
             <InfoRow
               icon={<GrCertificate className="text-green-700" size={18} />}
@@ -72,9 +72,9 @@ const InstructorInfo = ({ instructor }: { instructor: Instructor }) => {
       <div className="flex space-x-6 text-sm">
         <div>
           <h3 className="font-semibold">Experiență</h3>
-          <p>{instructor?.experience === "zero-to-one" && "0 - 1"} Ani</p>
-          <p>{instructor?.experience === "two-to-four" && "2 - 4"} Ani</p>
-          <p>{instructor?.experience === "five-and-above" && "5+"} Ani</p>
+          <p>{instructor?.experience === "zero-to-one" && "0 - 1 Ani"} </p>
+          <p>{instructor?.experience === "two-to-four" && "2 - 4 Ani"} </p>
+          <p>{instructor?.experience === "five-and-above" && "5+ Ani"} </p>
         </div>
         <div>
           <h3 className="font-semibold">Transmisie</h3>
