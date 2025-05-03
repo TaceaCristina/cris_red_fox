@@ -16,7 +16,7 @@ export default function NotifyBtn() {
     <div>
       <NotificationIconButton
         ref={notifButtonRef}
-        onClick={(e) => setIsVisible(!isVisible)}
+        onClick={() => setIsVisible(!isVisible)}
       />
       <NotificationFeedPopover
         // Convertește tipul de referință în mod sigur pentru NotificationFeedPopover

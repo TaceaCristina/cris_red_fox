@@ -15,6 +15,7 @@ import { AdminRoutes, InstructorRoutes, LoginRoute, UserRoutes } from "./routes"
 import ThemeToggle from "./ThemeToggler";
 import LogOutButton from "./LogOutBtn";
 import { Role } from "@prisma/client";
+import { IconType } from "react-icons";
 
 const getNavItems = (role: Role) => {
     switch (role) {
@@ -30,7 +31,7 @@ const getNavItems = (role: Role) => {
 };
 
 const SideBarDrawer = ({ role }: { role: Role }) => {
-    const [navItems, setNavItems] = useState<{ href: string; title: string; icon: any }[] | null>(null);
+    const [navItems, setNavItems] = useState<{ href: string; title: string; icon: IconType }[] | null>(null);
 
     useEffect(() => {
         const items = getNavItems(role);

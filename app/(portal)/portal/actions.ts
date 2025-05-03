@@ -19,7 +19,7 @@ export async function addSlots({ instructorId, formData }: AddSlotsArgs) {
   }
 
   const entries = Object.fromEntries(formData.entries());
-  const values: { [key: string]: any } = {};
+  const values: Record<string, unknown> = {};
 
   // Convert date from string to Date object
   if (entries.date) {
@@ -29,7 +29,7 @@ export async function addSlots({ instructorId, formData }: AddSlotsArgs) {
   // Convert times from JSON string to array of Date objects
   if (entries.times) {
     values.times = JSON.parse(entries.times as string).map(
-      (time: string) => new Date(time),
+      (time: string) => new Date(time)
     );
   }
 
@@ -39,14 +39,15 @@ export async function addSlots({ instructorId, formData }: AddSlotsArgs) {
       values[key] = entries[key];
     }
   });
-  const { date, type, times } = addTimeSlotsSchema.parse(values);
 
+  const { date, type, times } = addTimeSlotsSchema.parse(values);
   const lessonType = type as LessonType;
 
   try {
     const existingSlot = await prisma.timeSlots.findFirst({
       where: { date },
     });
+
     if (existingSlot) {
       return { message: `Intervalele orare pentru data ${date} există deja` };
     }
@@ -56,12 +57,22 @@ export async function addSlots({ instructorId, formData }: AddSlotsArgs) {
     }
 
     await prisma.timeSlots.create({
-      data: { type: lessonType, instructorId, times, date: new Date(date) },
+      data: {
+        type: lessonType,
+        instructorId,
+        times,
+        date: new Date(date),
+      },
     });
+
     revalidatePath("/portal");
     return { message: `Intervale orare adăugate` };
-  } catch (error: any) {
-    console.error(error);
-    throw new Error(`Actualizarea eșuată din cauza ${error.message}`);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error);
+      throw new Error(`Actualizarea eșuată din cauza ${error.message}`);
+    } else {
+      throw new Error("A apărut o eroare necunoscută");
+    }
   }
 }

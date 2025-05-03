@@ -94,6 +94,7 @@ const AddInstructorForm = ({ userId }: Props) => {
         try {
             await AddInstructor({ formData, areas, userId});
         } catch (error) {
+            console.error(error);
             toast.error("An unexpected error occured", { duration: 4000 });
         }
     }
@@ -268,18 +269,20 @@ const AddInstructorForm = ({ userId }: Props) => {
                     <FormField
                         control={control}
                         name="image"
-                        render={({ field: {value, ...fieldValues } }) => (
+                        render={({ field: { ...fieldValues } }) => (
                             <FormItem>
                                 <FormLabel>Imagine de profil</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        {...fieldValues}
+                                    <input
                                         type="file"
                                         accept="image/*"
                                         onChange={(e) => {
-                                            const file = e.target.files?.[0];
-                                            fieldValues.onChange(file);
+                                        const file = e.target.files?.[0];
+                                        fieldValues.onChange(file);
                                         }}
+                                        onBlur={fieldValues.onBlur}
+                                        name={fieldValues.name}
+                                        ref={fieldValues.ref}
                                     />
                                 </FormControl>
                                 <FormMessage />

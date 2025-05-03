@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import {
@@ -16,32 +15,32 @@ import { HardDrive, Moon, Sun } from "lucide-react";
 type ThemeValue = "system" | "light" | "dark";
 
 export default function ThemeToggle() {
-  const { resolvedTheme, theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
+  
   useEffect(() => {
     setMounted(true);
   }, []);
-
+  
   if (!mounted) return null; // Avoid rendering on the server
-
+  
   // Use resolvedTheme instead of calculating currentTheme
   const currentTheme = resolvedTheme || "system";
-
+  
   const renderButton = () => {
     const isDarkMode = currentTheme === "dark";
     const Icon = isDarkMode ? Moon : Sun;
     const buttonClasses = isDarkMode
       ? "rounded-full bg-slate-600 p-1 text-slate-100"
       : "rounded-full bg-slate-100 p-1";
-
+    
     return (
       <button className={buttonClasses}>
         <Icon size={20} />
       </button>
     );
   };
-
+  
   const renderMenuItem = (themeValue: ThemeValue, Icon: React.ElementType, label: string) => (
     <DropdownMenuItem
       className="flex items-center gap-3"
@@ -51,7 +50,7 @@ export default function ThemeToggle() {
       <span>{label}</span>
     </DropdownMenuItem>
   );
-
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{renderButton()}</DropdownMenuTrigger>

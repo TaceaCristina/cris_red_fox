@@ -24,8 +24,12 @@ export async function UpdateUser({ formData, id }: UpdateUserArgs) {
         address,
       },
     });
-  } catch (error: any) {
-    return { message: `An error occured` };
-  }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error); 
+    }
+    return { message: "An unexpected error occurred." };
+  } 
+  
   redirect("/user");
 }

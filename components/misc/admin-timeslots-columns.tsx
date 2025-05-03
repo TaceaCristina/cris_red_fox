@@ -1,5 +1,4 @@
 "use client";
-
 import dayjs from "dayjs";
 import { TimeSlots } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
@@ -27,7 +26,7 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(value: any) =>
+        onCheckedChange={(value: boolean | "indeterminate") =>
           table.toggleAllPageRowsSelected(!!value)
         }
         aria-label="Selectează tot"
@@ -91,7 +90,6 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
     header: "Vizualizează",
     cell: ({ row }) => {
       const { times } = row.original;
-
       return (
         <DialogWrapper
           isBtn={false}

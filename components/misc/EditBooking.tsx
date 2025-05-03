@@ -35,11 +35,9 @@ import { editBooking } from "./actions";
 export default function EditBooking({
   id,
   status,
-  paymentMethod,
 }: {
   id: string;
   status: BookingStatus;
-  paymentMethod: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -63,7 +61,8 @@ export default function EditBooking({
       const res = await editBooking(valuesToAdd);
       toast.success(`${res.message}`, { duration: 3000 });
       setIsOpen(false);
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error("Error editing booking:", error);
       toast.error("An Unexpected error occured");
     }
   }

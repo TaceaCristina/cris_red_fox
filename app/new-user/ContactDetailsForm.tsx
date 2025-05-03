@@ -43,8 +43,11 @@ export default function ContactDetailsForm({ id }: {id: string}) {
       await UpdateUser({ formData, id });
       toast.success(`Success`);
       router.push("/");
-    } catch (error) {
-      toast.error("An Unexpected error occured", { duration: 4000 });
+    }  catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+      }
+      return { message: "An unexpected error occurred." };
     }
   }
 

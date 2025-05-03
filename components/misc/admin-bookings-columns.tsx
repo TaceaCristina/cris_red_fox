@@ -31,7 +31,7 @@ export const adminBookingsColumns: ColumnDef<BookingWithInstructor>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(value: any) =>
+        onCheckedChange={(value: boolean | "indeterminate") =>
           table.toggleAllPageRowsSelected(!!value)
         }
         aria-label="Selectează tot"
@@ -135,7 +135,7 @@ export const adminBookingsColumns: ColumnDef<BookingWithInstructor>[] = [
   {
     header: "Mai multe...",
     cell: ({ row }) => {
-      const { times, createdAt, updatedAt, paid, instructor } = row.original;
+      const { times, createdAt, updatedAt, instructor } = row.original;
 
       return (
         <DialogWrapper
@@ -152,7 +152,7 @@ export const adminBookingsColumns: ColumnDef<BookingWithInstructor>[] = [
             ))}
           </div>
           <div className="grid gap-3">
-            <p> Instructor: {instructor.name}</p>
+            <p>Instructor: {instructor.name}</p>
             <p>CreatLa: {dayjs(createdAt).format("DD-MM-YYYY : HH:mm:ss")}</p>
             <p>CreatLa: {dayjs(updatedAt).format("DD-MM-YYYY : HH:mm:ss")}</p>
           </div>

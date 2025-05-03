@@ -1,5 +1,4 @@
 "use client";
-
 import dayjs from "dayjs";
 import { Booking } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
@@ -11,7 +10,6 @@ import { Badge } from "../ui/badge";
 import { format } from "date-fns";
 import DialogWrapper from "../common/DialogWrapper";
 import EditBooking from "./EditBooking";
-
 type BookingWithUser = Booking & {
   user: {
     name: string | null;
@@ -27,7 +25,7 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(value: any) =>
+        onCheckedChange={(value: boolean | "indeterminate") =>
           table.toggleAllPageRowsSelected(!!value)
         }
         aria-label="Selectează tot"
@@ -87,7 +85,6 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
     header: "Status",
     cell: ({ row }) => {
       const { status } = row.original;
-
       return <Badge>{status}</Badge>;
     },
   },
@@ -100,7 +97,6 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
     cell: ({ row }) => {
       const { cost } = row.original;
       const adminFee = (cost * 0.23).toFixed(2);
-
       return <div>{adminFee}</div>;
     },
   },
@@ -110,7 +106,6 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
       const { cost } = row.original;
       const adminFee = (cost * 0.23).toFixed(2);
       const earnings = cost - parseFloat(adminFee);
-
       return <div>{earnings}</div>;
     },
   },
@@ -118,7 +113,6 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
     header: "Mai multe...",
     cell: ({ row }) => {
       const { times, createdAt, updatedAt } = row.original;
-
       return (
         <DialogWrapper
           isBtn={false}
@@ -143,13 +137,11 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
   {
     header: "Editează",
     cell: ({ row }) => {
-      const { id, status, paymentMethod } = row.original;
-
+      const { id, status } = row.original;
       return (
-        <EditBooking id={id} status={status} paymentMethod={paymentMethod} />
+        <EditBooking id={id} status={status} />
       );
     },
   },
 ];
-
 export default InstructorBookingsColumns;

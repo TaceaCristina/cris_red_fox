@@ -20,6 +20,7 @@ const Providers = ({
 
   return (
     <NextThemesProvider {...props}>
+      <Toaster position="top-center" reverseOrder={false} />
       {hasValidUserId ? (
         <KnockProvider
           apiKey={process.env.NEXT_PUBLIC_KNOCK_PUBLIC_API_KEY as string}

@@ -52,7 +52,8 @@ const UserAccountForm = ({ user, id }: { user: User; id: string }) => {
       toast.success(`Success`);
       router.refresh();
     } catch (error) {
-      toast.error("An Unexpected error occured", { duration: 4000 });
+      console.error(error);
+      toast.error("A apărut o eroare. Încearcă din nou.", { duration: 4000 });
     }
   }
 

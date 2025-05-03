@@ -48,10 +48,10 @@ const InstructorInfo = ({ instructor }: { instructor: Instructor }) => {
         <Separator className="my-4" />
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {/* <InfoRow
+          <InfoRow
             icon={<IoStar className="text-red-500" size={18} />}
             text={`${instructor?.rating} (${instructor?.ratingCount})`}
-          /> */}
+          />
           {instructor?.certificate && (
             <InfoRow
               icon={<GrCertificate className="text-green-700" size={18} />}

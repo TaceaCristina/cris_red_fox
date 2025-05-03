@@ -122,7 +122,8 @@ const AddDateAndTimes = ({ instructorId }: {instructorId: string; }) => {
       reset();
       toast.success(`${res.message}`, { duration: 3000 });
     } catch (error) {
-      toast.error("An Unexpected error occured");
+      console.error(error);
+      toast.error("A apărut o eroare: " + (error instanceof Error ? error.message : "necunoscută"));
     }
   } 
 

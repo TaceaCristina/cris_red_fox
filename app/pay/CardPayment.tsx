@@ -22,7 +22,6 @@ import {
 
 import { useBookingStore } from "@/lib/store";
 
-import toast from "react-hot-toast";
 import { CardDetailsSchema, CardDetailsValues } from "@/lib/zod-validations";
 import LoadingBtn from "@/components/common/LoadingBtn";
 import { months } from "@/lib/getTime";
@@ -46,8 +45,11 @@ const CardPayment = ({ method }: { method: string }) => {
     try {
       await addBookings({ bookings, payMethod });
       resetBooking();
-    } catch (error) {
-      toast.error("An Unexpected error occured", { duration: 4000 });
+    }  catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error); // opțional
+      }
+      return { message: "An unexpected error occurred." };
     }
   }
 

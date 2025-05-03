@@ -92,7 +92,7 @@ const TimeSelector = ({
     const result = addToBooking(item); // Capture the result from addToBooking
     if (result && result.message) {
       if (result.message === "succes") {
-        toast.success("Rezervare adăugată", { duration: 3000 });
+        toast.success("Ședință adăugată", { duration: 3000 });
       } else {
         toast.error("Vă rugăm să finalizați mai întâi rezervările din coș.", {
           duration: 3000,

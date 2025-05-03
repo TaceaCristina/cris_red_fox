@@ -1,5 +1,4 @@
 "use client";
-
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { forwardRef, useEffect, useRef, useState } from "react";
@@ -12,7 +11,12 @@ const Editor = dynamic(
   { ssr: false }
 );
 
-export default forwardRef<Object, EditorProps>(function TextEditor(props, ref) {
+// Define the editor ref type properly
+type EditorRefType = {
+  current: unknown;
+};
+
+export default forwardRef<object, EditorProps>(function TextEditor(props, ref) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const isMounted = useRef(false);
 
@@ -47,7 +51,7 @@ export default forwardRef<Object, EditorProps>(function TextEditor(props, ref) {
         if (typeof ref === "function") {
           ref(r);
         } else if (ref) {
-          (ref as any).current = r;
+          (ref as EditorRefType).current = r;
         }
       }}
       {...props}

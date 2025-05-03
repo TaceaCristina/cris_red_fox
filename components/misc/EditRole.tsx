@@ -40,6 +40,11 @@ type EditUserProps = {
   role: Role;
 };
 
+// Define a type for error with optional message property
+interface ErrorWithMessage {
+  message?: string;
+}
+
 const EditRole = ({ id, role }: EditUserProps) => {
   const [open, setOpen] = useState(false);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
@@ -90,8 +95,9 @@ const EditRole = ({ id, role }: EditUserProps) => {
       await editUser(valuesToAdd);
       toast.success("Rolul a fost actualizat cu succes");
       setOpen(false);
-    } catch (error: any) {
-      toast.error(error?.message || "A apărut o eroare neașteptată");
+    } catch (error: unknown) {
+      const errorWithMessage = error as ErrorWithMessage;
+      toast.error(errorWithMessage?.message || "A apărut o eroare neașteptată");
     } finally {
       setLoading(false);
     }
@@ -176,7 +182,7 @@ const EditRole = ({ id, role }: EditUserProps) => {
             />
 
             <Button type="submit" disabled={isCurrentUser || loading}>
-              {loading ? "Se procesează..." : "Trimite"}
+              {loading ? "Se procesează..." : "Salvează"}
             </Button>
           </form>
         </Form>

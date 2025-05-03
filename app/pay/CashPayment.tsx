@@ -2,7 +2,6 @@
 
 import { useBookingStore } from "@/lib/store";
 import { GiPayMoney } from "react-icons/gi";
-import toast from "react-hot-toast";
 import { useState } from "react";
 import LoadingBtn from "@/components/common/LoadingBtn";
 import { addBookings } from "./actions";
@@ -20,8 +19,11 @@ const CashPayment = ({ method }: { method: string }) => {
       await addBookings({ bookings, payMethod });
       resetBooking();
       setLoading(false);
-    } catch (error) {
-      toast.error("An Unexpected error occured", { duration: 4000 });
+    }  catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error); // opțional
+      }
+      return { message: "An unexpected error occurred." };
     }
   }
 

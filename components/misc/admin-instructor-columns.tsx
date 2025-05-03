@@ -1,5 +1,4 @@
 "use client";
-
 import dayjs from "dayjs";
 import { Instructor } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
@@ -17,7 +16,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { MdCheck } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
-
+import { deleteInstructorProfile } from "@/app/(dashboard)/dashboard/users/[user]/actions";
 export const instructorColumns: ColumnDef<Instructor>[] = [
   {
     id: "select",
@@ -101,7 +100,23 @@ export const instructorColumns: ColumnDef<Instructor>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Acțiuni</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="cursor-pointer">Suspendă utilizatorul</DropdownMenuItem>
+          <DropdownMenuItem 
+            className="cursor-pointer"
+            onClick={async () => {
+              if (confirm("Sigur doriți să ștergeți acest profil de instructor?")) {
+                const result = await deleteInstructorProfile(row.original.id);
+                if (result.success) {
+                  alert(result.message);
+                  // Reîmprospătează pagina pentru a reflecta modificările
+                  window.location.reload();
+                } else {
+                  alert(result.message);
+                }
+              }
+            }}
+          >
+            Șterge profilul
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
