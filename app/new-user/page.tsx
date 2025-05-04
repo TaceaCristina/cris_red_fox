@@ -20,7 +20,7 @@ export default async function NewUserPage() {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 p-5 shadow-lg sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Add your details below
+            Adaugă detaliile tale mai jos
           </h1>
         </div>
 
