@@ -292,7 +292,7 @@ const AddDateAndTimes = ({ instructorId }: {instructorId: string; }) => {
           />
 
           <LoadingBtn type="submit" loading={isSubmitting}>
-            Trimite
+            Salvează
           </LoadingBtn>
         </form>
       </Form>

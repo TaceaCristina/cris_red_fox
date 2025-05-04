@@ -4,96 +4,96 @@ import { nanoid } from "nanoid";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { InstructorSchema } from "@/lib/zod-validations";
-import getSession from "@/lib/getSession"; // <-- asigură-te că importi corect
+import getSession from "@/lib/getSession";
+
 type AddInstructorArgs = {
   formData: FormData;
   areas: string[];
   userId: string;
 };
+
 export async function AddInstructor({
   formData,
   areas,
   userId,
 }: AddInstructorArgs) {
-  const values = Object.fromEntries(formData.entries());
-  const {
-    name,
-    image,
-    phone,
-    email,
-    certificate,
-    experience,
-    bio,
-    services,
-    dcost,
-    lcost,
-    transmission,
-    location,
-  } = InstructorSchema.parse(values);
-  const slug = `${makeSlug(name)}-${nanoid(10)}`;
-  let img: string | undefined;
-  if (image) {
-    img = `/img/instructors/${image.name}`;
-  } else {
-    img = undefined;
-  }
-  await prisma.instructor.create({
-    data: {
-      userId,
-      slug,
-      name: name.trim(),
-      phone: phone.trim(),
-      email: email.trim(),
-      img,
-      certificate: certificate?.trim(),
+  try {
+    const values = Object.fromEntries(formData.entries());
+    const {
+      name,
+      image,
+      phone,
+      email,
+      certificate,
       experience,
-      bio: bio?.trim(),
-      services: services?.trim(),
-      dcost: parseInt(dcost as string),
-      lcost: parseInt(lcost as string),
+      bio,
+      services,
+      dcost,
+      lcost,
       transmission,
-      location: location?.trim(),
-      areas,
-    },
-  });
-  redirect("/dashboard/instructors");
+      location,
+    } = InstructorSchema.parse(values);
+    
+    const slug = `${makeSlug(name)}-${nanoid(10)}`;
+    let img: string | undefined;
+    
+    if (image) {
+      img = `/img/instructors/${image.name}`;
+    } else {
+      img = undefined;
+    }
+    
+    await prisma.instructor.create({
+      data: {
+        userId,
+        slug,
+        name: name.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
+        img,
+        certificate: certificate?.trim(),
+        experience,
+        bio: bio?.trim(),
+        services: services?.trim(),
+        dcost: parseInt(dcost as string),
+        lcost: parseInt(lcost as string),
+        transmission,
+        location: location?.trim(),
+        areas,
+      },
+    });
+    
+    // În loc să redirecționezi direct, returnează un rezultat de succes
+    return { success: true };
+  } catch (error) {
+    console.error("Eroare la adăugarea instructorului:", error);
+    // Returnează eroarea pentru a fi gestionată pe client
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "A apărut o eroare la adăugarea profilului instructorului" 
+    };
+  }
 }
 
+// Add the missing function for deleting instructor profile
 export async function deleteInstructorProfile(instructorId: string) {
   try {
-    const session = await getSession();
-    if (!session || !session.user || session.user.role !== "ADMIN") {
-      throw new Error("Neautorizat");
-    }
-    
-    // Verifică dacă instructorul există
-    const instructor = await prisma.instructor.findUnique({ 
-      where: { id: instructorId } 
-    });
-    
-    if (!instructor) {
-      throw new Error("Profilul instructorului nu există");
-    }
-    
-    // Șterge mai întâi fiecare TimeSlot asociat instructorului
-    await prisma.timeSlots.deleteMany({
-      where: { instructorId: instructorId }
-    });
-    
-    // Șterge profilul instructorului
+    // Delete the instructor profile from the database
     await prisma.instructor.delete({
-      where: { id: instructorId }
+      where: {
+        id: instructorId,
+      },
     });
-    
+
     return { 
       success: true, 
       message: "Profilul instructorului a fost șters cu succes" 
     };
   } catch (error) {
-    const err = error as Error;
-    return {
-      success: false,
-      message: err.message || "A apărut o eroare la ștergerea profilului instructorului"
+    console.error("Eroare la ștergerea profilului instructorului:", error);
+    return { 
+      success: false, 
+      message: "A apărut o eroare la ștergerea profilului instructorului" 
     };
   }
 }

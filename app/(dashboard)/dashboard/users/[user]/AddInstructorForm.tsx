@@ -1,9 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { draftToMarkdown } from "markdown-draft-js";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { PiCaretUpDown, PiCheck } from "react-icons/pi";
@@ -46,62 +47,126 @@ import { drivingLocations } from "@/lib/dummy";
 import LoadingBtn from "@/components/common/LoadingBtn";
 import { InstructorSchema, InstructorValues } from "@/lib/zod-validations";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import TextEditor from "@/components/common/TextEditor";
+import dynamic from "next/dynamic";
 import { Badge } from "@/components/ui/badge";
 import { AddInstructor } from "./actions";
+
+// Import TextEditor dynamically to ensure it only loads on the client side
+const TextEditor = dynamic(() => import("@/components/common/TextEditor"), {
+    ssr: false,
+    loading: () => <div className="border rounded-md px-3 py-2 min-h-[150px]">Loading editor...</div>
+});
 
 type Props = {
     userId: string;
 };
 
-//TODO: fix the err that shows when you select 5+ years of experience when filling the form
-
 const AddInstructorForm = ({ userId }: Props) => {
-    const [areas, setAreas] = useState<string[]>([]);
-    const [areasInput, setAreasInput] = useState("");
-
-    const handleAddArea = () => {
-        const updatedAreas = addArrayItem(areas, areasInput);
-        setAreas(updatedAreas);
-        setAreasInput("");
-    };
-    const handleRemoveArea = (indexToRemove: number) => {
-        const updatedAreas = removeArrayItem(areas, indexToRemove);
-        setAreas(updatedAreas);
-    };
-
+    // Router for navigation
+    const router = useRouter();
+    
+    // Use a ref to track component mount status more safely
+    const isMountedRef = useRef(false);
+    // State for client-side rendering detection
+    const [isClient, setIsClient] = useState(false);
+    
+    // Form initialization with default values
     const form = useForm<InstructorValues>({
         resolver: zodResolver(InstructorSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            phone: "",
+            experience: undefined,
+            bio: "",
+            certificate: "",
+            location: "",
+            dcost: "",
+            lcost: "",
+            transmission: undefined,
+            services: "",
+        }
     });
+
+    // Initialize areas state
+    const [areas, setAreas] = useState<string[]>([]);
+    const [areasInput, setAreasInput] = useState("");
+    
+    // Set client-side state safely
+    useEffect(() => {
+        setIsClient(true);
+        isMountedRef.current = true;
+        
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, []);
 
     const {
         handleSubmit,
         control,
         setFocus,
+        setValue,
         formState: { isSubmitting },
     } = form;
 
+    // Handle adding area safely
+    const handleAddArea = () => {
+        if (!areasInput.trim() || !isMountedRef.current) return;
+        
+        setAreas(prevAreas => [...prevAreas, areasInput.trim()]);
+        setAreasInput("");
+    };
+    
+    // Handle removing area safely
+    const handleRemoveArea = (indexToRemove: number) => {
+        if (!isMountedRef.current) return;
+        
+        setAreas(prevAreas => 
+            prevAreas.filter((_, index) => index !== indexToRemove)
+        );
+    };
+
+    // Form submission handler
     async function onSubmit(values: InstructorValues) {
+        if (!isMountedRef.current) return;
+        
         const formData = new FormData();
 
+        // Add form values to FormData
         Object.entries(values).forEach(([key, value]) => {
-            if(value)
-            {
+            if (value !== undefined && value !== null && value !== "") {
                 formData.append(key, value);
             }
         });
 
         try {
-            await AddInstructor({ formData, areas, userId});
+            const result = await AddInstructor({ formData, areas, userId });
+            
+            if (result.success) {
+                toast.success("Profilul instructorului a fost adăugat cu succes");
+                router.push("/dashboard/instructors");
+            } else {
+                toast.error(result.error || "A apărut o eroare la adăugarea profilului", { duration: 4000 });
+            }
         } catch (error) {
-            console.error(error);
-            toast.error("An unexpected error occured", { duration: 4000 });
+            console.error("Eroare la trimiterea formularului:", error);
+            toast.error("A apărut o eroare neașteptată", { duration: 4000 });
         }
+    }
+
+    // If not client-side rendered yet, show a loading indicator
+    if (!isClient) {
+        return (
+            <div className="flex items-center justify-center h-[60vh]">
+                <div className="animate-pulse">Se încarcă formularul...</div>
+            </div>
+        );
     }
 
     return (
         <ScrollArea className="h-[60vh] px-5">
-            <Form {...form} >
+            <Form {...form}>
                 <form className="space-y-6 p-2" noValidate onSubmit={handleSubmit(onSubmit)}>
                     <FormField
                         control={control}
@@ -151,7 +216,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                                 <FormControl>
                                     <Select
                                         onValueChange={field.onChange}
-                                        defaultValue={field.value}
+                                        value={field.value}
                                     >
                                         <SelectTrigger className="">
                                             <SelectValue placeholder="Selectează anii" />
@@ -171,22 +236,24 @@ const AddInstructorForm = ({ userId }: Props) => {
                         )}
                     />
 
-                    <FormField
-                        control={control}
-                        name="bio"
-                        render={({ field }) => (
-                            <FormItem>
-                                <Label onClick={() => setFocus("bio")}>Biografie</Label>
-                                <FormControl>
-                                    <TextEditor
-                                        onChange={(draft) => field.onChange(draftToMarkdown(draft))}
-                                        ref={field.ref}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    {isClient && (
+                        <FormField
+                            control={control}
+                            name="bio"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Label onClick={() => isClient && setFocus("bio")}>Biografie</Label>
+                                    <FormControl>
+                                        <TextEditor
+                                            onChange={(rawContent) => field.onChange(draftToMarkdown(rawContent))}
+                                            ref={field.ref}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )}
 
                     <FormField
                         control={control}
@@ -203,7 +270,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                     />
 
                     <FormField
-                        control={form.control}
+                        control={control}
                         name="location"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
@@ -228,7 +295,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="] p-0">
+                                    <PopoverContent className="p-0">
                                         <Command>
                                             <CommandInput
                                                 placeholder="Caută locația..."
@@ -242,7 +309,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                                                             value={location.label}
                                                             key={location.value}
                                                             onSelect={() => {
-                                                                form.setValue("location", location.value);
+                                                                setValue("location", location.value);
                                                             }}
                                                         >
                                                             {location.label}
@@ -277,8 +344,8 @@ const AddInstructorForm = ({ userId }: Props) => {
                                         type="file"
                                         accept="image/*"
                                         onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        fieldValues.onChange(file);
+                                            const file = e.target.files?.[0];
+                                            fieldValues.onChange(file);
                                         }}
                                         onBlur={fieldValues.onBlur}
                                         name={fieldValues.name}
@@ -326,7 +393,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                                 <FormControl>
                                     <Select
                                         onValueChange={field.onChange}
-                                        defaultValue={field.value}
+                                        value={field.value}
                                     >
                                         <SelectTrigger className="">
                                             <SelectValue placeholder="Selectează tipul transmisiei" />
@@ -355,56 +422,66 @@ const AddInstructorForm = ({ userId }: Props) => {
                                         placeholder="areas"
                                         value={areasInput}
                                         onChange={(e) => setAreasInput(e.target.value.toLowerCase())}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && areasInput.trim()) {
+                                                e.preventDefault();
+                                                handleAddArea();
+                                            }
+                                        }}
                                     />
                                 </FormControl>
-                                {areas.length ? (
-                                    <ul className="flex list-none flex-wrap space-x-2">
-                                        {areas.map((value, index) => {
-                                            return (
-                                                <li key={index} className="relative">
-                                                    <Badge>{value}</Badge>
-                                                    <div className="absolute right-0 top-0 -mt-1 mr-[-8px] h-4 w-4 rounded-full bg-red-500">
-                                                        <button
-                                                            type="button"
-                                                            className="absolute right-1 top-1 -mt-1 text-xs font-semibold text-black focus:outline-none"
-                                                            onClick={() => handleRemoveArea(index)}
-                                                        >
-                                                            x
-                                                        </button>
-                                                    </div>
-                                                </li>
-                                            );
-                                        })}
+                                {areas.length > 0 && (
+                                    <ul className="flex list-none flex-wrap gap-2 mt-2">
+                                        {areas.map((value, index) => (
+                                            <li key={index} className="relative">
+                                                <Badge>{value}</Badge>
+                                                <div className="absolute right-0 top-0 -mt-1 mr-[-8px] h-4 w-4 rounded-full bg-red-500">
+                                                    <button
+                                                        type="button"
+                                                        className="absolute right-1 top-1 -mt-1 text-xs font-semibold text-black focus:outline-none"
+                                                        onClick={() => handleRemoveArea(index)}
+                                                    >
+                                                        x
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        ))}
                                     </ul>
-                                ) : null}
+                                )}
                             </FormItem>
 
-                            <Button onClick={handleAddArea} type="button">
-                                Adaugă câmpuri
+                            <Button 
+                                onClick={handleAddArea} 
+                                type="button"
+                                disabled={!areasInput.trim()}
+                            >
+                                Adaugă zonă
                             </Button>
                         </div>
                     </>
 
-                    <FormField
-                        control={control}
-                        name="services"
-                        render={({ field }) => (
-                            <FormItem>
-                                <Label onClick={() => setFocus("services")}>
-                                    Servicii oferite
-                                </Label>
-                                <FormControl>
-                                    <TextEditor
-                                        onChange={(draft) => field.onChange(draftToMarkdown(draft))}
-                                        ref={field.ref}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    {isClient && (
+                        <FormField
+                            control={control}
+                            name="services"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Label onClick={() => isClient && setFocus("services")}>
+                                        Servicii oferite
+                                    </Label>
+                                    <FormControl>
+                                        <TextEditor
+                                            onChange={(rawContent) => field.onChange(draftToMarkdown(rawContent))}
+                                            ref={field.ref}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )}
                     <LoadingBtn type="submit" loading={isSubmitting}>
-                        Trimiteți
+                        Salvează
                     </LoadingBtn>
                 </form>
             </Form>
