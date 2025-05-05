@@ -72,6 +72,10 @@ const AddInstructorForm = ({ userId }: Props) => {
     const isMountedRef = useRef(false);
     // State pentru detectarea renderizării pe client
     const [isClient, setIsClient] = useState(false);
+    // State pentru a urmări/afișa încărcarea imaginii
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [dragActive, setDragActive] = useState(false);
     
     // Inițializăm formularul cu valori implicite
     const form = useForm<InstructorValues>({
@@ -110,8 +114,45 @@ const AddInstructorForm = ({ userId }: Props) => {
         control,
         setFocus,
         setValue,
+        watch,
         formState: { isSubmitting },
     } = form;
+
+    // Monitorizăm schimbările în câmpul de imagine
+    const imageField = watch("image");
+    
+    // Actualizăm previzualizarea când se schimbă fișierul de imagine
+    useEffect(() => {
+        if (imageField instanceof File) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(imageField);
+        } else {
+            setImagePreview(null);
+        }
+    }, [imageField]);
+    
+    // Funcție pentru a procesa un fișier de imagine (validare și adăugare)
+    const handleImageFile = (file: File | null) => {
+        if (!file) return;
+        
+        // Verificăm dacă este o imagine
+        if (!file.type.startsWith('image/')) {
+            toast.error('Vă rugăm să selectați un fișier imagine valid.');
+            return;
+        }
+        
+        // Verificăm dimensiunea (maxim 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error('Imaginea trebuie să fie mai mică de 2MB.');
+            return;
+        }
+        
+        // Setăm fișierul în formular
+        setValue('image', file);
+    };
 
     // Gestionează adăugarea unei zone în siguranță
     const handleAddArea = () => {
@@ -134,21 +175,30 @@ const AddInstructorForm = ({ userId }: Props) => {
     async function onSubmit(values: InstructorValues) {
         if (!isMountedRef.current) return;
         
-        const formData = new FormData();
-
-        // Adaugă valorile formularului în FormData
-        Object.entries(values).forEach(([key, value]) => {
-            if (value !== undefined && value !== null && value !== "") {
-                formData.append(key, value.toString());
-            }
-        });
-
-        // Adăugăm zonele în formData
-        areas.forEach((area, index) => {
-            formData.append(`areas[${index}]`, area);
-        });
-
+        setUploading(true);
+        
         try {
+            const formData = new FormData();
+
+            // Adaugă valorile formularului în FormData
+            Object.entries(values).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    // Verificăm dacă e File - îl trimitem direct
+                    if (key === "image" && value instanceof File) {
+                        formData.append(key, value);
+                    } 
+                    // Pentru alte valori, le convertim la string dacă e necesar
+                    else if (value !== "") {
+                        formData.append(key, value.toString());
+                    }
+                }
+            });
+
+            // Adăugăm zonele în formData ca array de string-uri
+            areas.forEach(area => {
+                formData.append("areas[]", area);
+            });
+
             const result = await AddInstructor({ formData, areas, userId });
             
             if (result.success) {
@@ -160,6 +210,8 @@ const AddInstructorForm = ({ userId }: Props) => {
         } catch (error) {
             console.error("Eroare la trimiterea formularului:", error);
             toast.error("A apărut o eroare neașteptată", { duration: 4000 });
+        } finally {
+            setUploading(false);
         }
     }
 
@@ -349,15 +401,117 @@ const AddInstructorForm = ({ userId }: Props) => {
                             <FormItem>
                                 <FormLabel>Imagine de profil</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                            const file = e.target.files?.[0];
-                                            onChange(file);
-                                        }}
-                                        {...fieldValues}
-                                    />
+                                    <div className="space-y-4">
+                                        <div className="flex flex-col items-center gap-4 md:flex-row">
+                                            <div
+                                                className={`border-2 border-dashed rounded-lg p-6 w-full relative flex flex-col items-center justify-center text-center ${dragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'}`}
+                                                onDragEnter={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setDragActive(true);
+                                                }}
+                                                onDragLeave={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setDragActive(false);
+                                                }}
+                                                onDragOver={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setDragActive(true);
+                                                }}
+                                                onDrop={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setDragActive(false);
+                                                    
+                                                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                                                        handleImageFile(e.dataTransfer.files[0]);
+                                                    }
+                                                }}
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-2">
+                                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+                                                    <rect x="16" y="2" width="6" height="6" rx="1"></rect>
+                                                    <circle cx="9" cy="9" r="2"></circle>
+                                                    <path d="m21 15-3.4-3.4a1 1 0 0 0-1.4 0L5 22"></path>
+                                                </svg>
+                                                <p className="mb-1 font-medium">Trage și plasează imaginea aici sau</p>
+                                                <Button
+                                                    type="button"
+                                                    variant="secondary"
+                                                    className="mt-2"
+                                                    onClick={() => {
+                                                        // Creează un element input de tip file și simulează click pe el
+                                                        const input = document.createElement('input');
+                                                        input.type = 'file';
+                                                        input.accept = 'image/*';
+                                                        input.onchange = (e) => {
+                                                            const file = (e.target as HTMLInputElement).files?.[0];
+                                                            if (file) {
+                                                                handleImageFile(file);
+                                                            }
+                                                        };
+                                                        input.click();
+                                                    }}
+                                                >
+                                                    <span className="flex items-center gap-2">
+                                                        Selectează fișier
+                                                    </span>
+                                                </Button>
+                                                <p className="text-xs text-muted-foreground mt-2">
+                                                    PNG, JPG sau GIF (max. 2MB)
+                                                </p>
+                                            </div>
+                                            
+                                            {value instanceof File && (
+                                                <div className="flex items-center gap-2 text-sm">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                                        <polyline points="14 2 14 8.0005 20 8"></polyline>
+                                                    </svg>
+                                                    <span className="font-medium truncate max-w-xs">{value.name}</span>
+                                                    <span className="text-muted-foreground">
+                                                        ({(value.size / (1024 * 1024)).toFixed(2)} MB)
+                                                    </span>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-6 w-6 p-0 rounded-full"
+                                                        onClick={() => onChange(undefined)}
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M18 6 6 18"></path>
+                                                            <path d="m6 6 12 12"></path>
+                                                        </svg>
+                                                        <span className="sr-only">Șterge</span>
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        {imagePreview && (
+                                            <div className="mt-2">
+                                                <p className="text-sm text-muted-foreground mb-2">Previzualizare:</p>
+                                                <div className="relative w-40 h-40 rounded-md overflow-hidden border bg-muted/20">
+                                                    <img 
+                                                        src={imagePreview} 
+                                                        alt="Previzualizare imagine" 
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {/* Câmp ascuns pentru a păstra compatibilitatea cu Field din react-hook-form */}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            {...fieldValues}
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -486,8 +640,8 @@ const AddInstructorForm = ({ userId }: Props) => {
                     )}
                     
                     <div className="pt-4">
-                        <LoadingBtn type="submit" loading={isSubmitting} className="w-full">
-                            Salvează
+                        <LoadingBtn type="submit" loading={isSubmitting || uploading} className="w-full">
+                            {uploading ? "Se salvează..." : "Salvează"}
                         </LoadingBtn>
                     </div>
                 </form>

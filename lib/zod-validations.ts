@@ -26,15 +26,18 @@ const numericString = z
   .max(13, "Numărul trebuie să aibă maxim 13 cifre") // Adaptat pentru CNP sau ID-uri
   .optional();
 
+// Modificat pentru a accepta corect fișiere și a permite undefined
 const ImageSchema = z
-  .custom<File | undefined>()
+  .instanceof(File)
   .refine(
-    (file) => !file || (file instanceof File && file.type.startsWith("image/")),
+    (file) => !file || file.type.startsWith("image/"),
     "Doar imagini permise"
   )
-  .refine((file) => {
-    return !file || file.size < 1024 * 1024 * 2;
-  }, "Fișierul trebuie să fie mai mic de 2MB");
+  .refine(
+    (file) => !file || file.size < 1024 * 1024 * 2,
+    "Fișierul trebuie să fie mai mic de 2MB"
+  )
+  .optional();
 
 const CreditCardNumber = z.string().refine(
   (number) => {
@@ -72,16 +75,16 @@ export const userAccountSchema = z.object({
 export const InstructorSchema = z.object({
   name: requiredString.max(50),
   phone: zPhone,
-  email: z.string().email(),
-  image: ImageSchema.optional(),
+  email: z.string().email("Email invalid"),
+  image: ImageSchema, // Permite undefined și validează fișierele corect
   certificate: z.string().optional(),
   experience: requiredString,
   bio: z.string().max(5000).optional(),
   services: z.string().max(5000).optional(),
-  dcost: numericString, // Poate fi redenumit în "dcostRON"
-  lcost: numericString, // Poate fi redenumit în "lcostRON"
+  dcost: numericString,
+  lcost: numericString,
   transmission: z.string(),
-  location: z.string().optional(), // Poți face o listă fixă cu județele din România
+  location: z.string().optional(),
 });
 
 export const addTimeSlotsSchema = z.object({
@@ -95,7 +98,7 @@ export const addTimeSlotsSchema = z.object({
 export const CardDetailsSchema = z.object({
   name: requiredString.max(50),
   cardNumber: CreditCardNumber,
-  cvc: z.string().regex(/^\d+$/, "Trebuie să fie un număr").min(3).max(3), // Suportă și 4 cifre
+  cvc: z.string().regex(/^\d+$/, "Trebuie să fie un număr").min(3).max(4), // Suportă și 4 cifre
   month: requiredString,
   year: requiredString,
 });

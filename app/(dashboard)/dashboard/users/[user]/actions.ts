@@ -5,6 +5,8 @@ import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { InstructorSchema } from "@/lib/zod-validations";
 import getSession from "@/lib/getSession";
+import { writeFile, mkdir } from 'fs/promises';
+import path from 'path';
 
 type AddInstructorArgs = {
   formData: FormData;
@@ -37,8 +39,31 @@ export async function AddInstructor({
     const slug = `${makeSlug(name)}-${nanoid(10)}`;
     let img: string | undefined;
     
-    if (image) {
-      img = `/img/instructors/${image.name}`;
+    // Tratăm încărcarea imaginii
+    if (image && image instanceof File) {
+      // Generăm un nume unic pentru fișier pentru a evita conflictele
+      const uniqueFileName = `${Date.now()}-${image.name.replace(/\s+/g, '-')}`;
+      
+      // Definim calea unde vom salva imaginea
+      const uploadDir = path.join(process.cwd(), 'public', 'img', 'instructors');
+      const imagePath = path.join(uploadDir, uniqueFileName);
+      
+      try {
+        // Ne asigurăm că directorul există
+        await mkdir(uploadDir, { recursive: true });
+        
+        // Citim datele din fișierul încărcat
+        const buffer = await image.arrayBuffer();
+        
+        // Scriem fișierul în sistem
+        await writeFile(imagePath, Buffer.from(buffer));
+        
+        // Setăm calea relativă pentru baza de date
+        img = `/img/instructors/${uniqueFileName}`;
+      } catch (fileError) {
+        console.error("Eroare la salvarea imaginii:", fileError);
+        throw new Error("Nu s-a putut salva imaginea. Vă rugăm încercați din nou.");
+      }
     } else {
       img = undefined;
     }
