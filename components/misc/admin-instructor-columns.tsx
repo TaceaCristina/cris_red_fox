@@ -51,7 +51,7 @@ export const instructorColumns: ColumnDef<Instructor>[] = [
     ),
   },
   {
-    accessorKey: "name",
+    accessorKey: "nume",
     header: "Instructor",
   },
   {
@@ -67,28 +67,28 @@ export const instructorColumns: ColumnDef<Instructor>[] = [
     ),
   },
   {
-    accessorKey: "active",
+    accessorKey: "activ",
     header: "Status activ",
     cell: ({ row }) => (
       <div>{row.original.active ? <MdCheck /> : <RxCross2 />}</div>
     ),
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "creatLa",
     header: "Creat",
     cell: ({ row }) => (
       <div>{dayjs(row.original.createdAt).format("DD-MM-YYYY : HH:mm:ss")}</div>
     ),
   },
   {
-    accessorKey: "updatedAt",
+    accessorKey: "actualizatLa",
     header: "Actualizat",
     cell: ({ row }) => (
       <div>{dayjs(row.original.updatedAt).format("DD-MM-YYYY : HH:mm:ss")}</div>
     ),
   },
   {
-    id: "actions",
+    id: "acțiuni",
     cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
