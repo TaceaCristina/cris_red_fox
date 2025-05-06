@@ -35,7 +35,7 @@ const CustomCalendar = () => {
               setToday(currentDate);
             }}
           >
-            Azi
+            
           </h1>
           <IoMdArrowDropright
             className="w-5 h-5 cursor-pointer hover:scale-105 transition-all"

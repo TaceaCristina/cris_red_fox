@@ -12,8 +12,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CiCreditCard2 } from "react-icons/ci";
 import { BsCashCoin } from "react-icons/bs";
 import { useState } from "react";
-import CardPayment from "./CardPayment";
 import CashPayment from "./CashPayment";
+import CardPayment from "./CardPayment";
 
 const PaymentMethods = () => {
   const [method, setMethod] = useState("card");
