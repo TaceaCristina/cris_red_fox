@@ -122,7 +122,7 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
           <div className="mt-2">
             {times.map((time, index) => (
               <Badge key={index} variant="outline">
-                {format(time, "HH:mm")}hrs
+                {format(time, "HH:mm")}
               </Badge>
             ))}
           </div>

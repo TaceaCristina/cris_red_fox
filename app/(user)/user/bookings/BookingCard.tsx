@@ -34,7 +34,7 @@ const BookingCard = ({ booking, img, name, phone }: BookingCardProps) => {
         <p>
           Date:{" "}
           <span className="font-bold">
-            {format(booking.date, "ydd/MM/yyyy")}{" "}
+            {format(booking.date, "dd/MM/yyyy")}{" "}
           </span>{" "}
         </p>
         <DialogWrapper
