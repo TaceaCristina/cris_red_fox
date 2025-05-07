@@ -80,11 +80,21 @@ const TimeSelector = ({
       cost = lcost;
     }
     const selectedTimesArray = Object.values(selectedTimes).flat();
+
+    const correctedTimes = selectedTimesArray.map((time) => {
+      const day = new Date(selectedDate);
+      const fullDate = new Date(day);
+      fullDate.setHours(time.getHours());
+      fullDate.setMinutes(time.getMinutes());
+      fullDate.setSeconds(0);
+      fullDate.setMilliseconds(0);
+      return fullDate;
+    });
     const bookingDate = format(selectedDate, "yyyy-MM-dd");
 
     const item = {
       date: bookingDate,
-      times: selectedTimesArray,
+      times: correctedTimes,
       cost,
       type: lessonType as LessonType,
       instructorId,
