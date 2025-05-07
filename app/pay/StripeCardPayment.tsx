@@ -5,14 +5,14 @@ import { CardElement, useStripe, useElements, Elements } from "@stripe/react-str
 import { getStripe } from "@/lib/stripe";
 import { useBookingStore } from "@/lib/store";
 import LoadingBtn from "@/components/common/LoadingBtn";
-import { addBookings, createPaymentIntent } from "./actions";
+import { addBookings } from "./actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Check, AlertCircle } from "lucide-react";
 
 // Componenta Stripe Card Wrapper
-const CardPayment = ({ method }: { method: string }) => {
+export const StripeCardPaymentWrapper = ({ method }: { method: string }) => {
   const [stripeError, setStripeError] = useState<string | null>(null);
   const stripePromise = getStripe();
 
@@ -48,29 +48,29 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
   const [error, setError] = useState<string | null>(null);
   const [succeeded, setSucceeded] = useState(false);
   const [clientSecret, setClientSecret] = useState("");
-  const [totalAmount, setTotalAmount] = useState(0);
 
   const payMethod = method.toUpperCase();
 
   useEffect(() => {
-    // Calculează suma totală
-    if (bookings.length > 0) {
-      const total = bookings.reduce((sum, booking) => sum + (booking.cost * booking.times.length), 0);
-      setTotalAmount(total);
-    }
-
     // Creează intent de plată când componenta se încarcă
     if (bookings.length > 0) {
       setLoading(true);
-      setError(null);
-      
-      // Folosim server action în loc de API route
-      createPaymentIntent(bookings)
+      fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookings }),
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`Eroare server: ${res.status}`);
+          }
+          return res.json();
+        })
         .then((data) => {
-          if (data.clientSecret) {
-            setClientSecret(data.clientSecret);
+          if (data.error) {
+            setError(data.error);
           } else {
-            throw new Error("Nu s-a putut obține clientSecret");
+            setClientSecret(data.clientSecret);
           }
           setLoading(false);
         })
@@ -133,8 +133,6 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
         // Adaugă rezervări în baza de date
         await addBookings({ bookings, payMethod });
         resetBooking();
-      } else {
-        setError(`Plata este ${paymentIntent.status}. Vă rugăm să încercați din nou.`);
       }
     } catch (err: any) {
       console.error("Eroare la procesarea plății:", err);
@@ -165,9 +163,6 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
               <div className="mt-1 border rounded-md p-3">
                 <CardElement id="card-element" options={cardStyle} />
               </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Informațiile cardului dvs. sunt procesate în siguranță prin Stripe.
-              </p>
             </div>
 
             {error && (
@@ -186,10 +181,10 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
         loading={loading} 
         className="w-full"
       >
-        {loading ? "Se procesează..." : `Plătește ${totalAmount} RON`}
+        {loading ? "Se procesează..." : `Plătește ${bookings.reduce((sum, booking) => sum + (booking.cost * booking.times.length), 0)} RON`}
       </LoadingBtn>
     </form>
   );
 };
 
-export default CardPayment;
+export default StripeCardPaymentWrapper;
