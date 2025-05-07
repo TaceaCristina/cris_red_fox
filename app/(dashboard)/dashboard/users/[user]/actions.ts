@@ -103,7 +103,14 @@ export async function AddInstructor({
 // Add the missing function for deleting instructor profile
 export async function deleteInstructorProfile(instructorId: string) {
   try {
-    // Delete the instructor profile from the database
+    // First, delete all time slots associated with the instructor
+    await prisma.timeSlots.deleteMany({
+      where: {
+        instructorId: instructorId,
+      },
+    });
+
+    // Then delete the instructor profile from the database
     await prisma.instructor.delete({
       where: {
         id: instructorId,
