@@ -5,26 +5,34 @@ import { User } from "next-auth";
 import Header from "@/components/common/Header";
 import { InstructorTabs } from "./InstructorTabs";
 import Footer from "@/components/common/Footer";
-
+import { redirect } from "next/navigation";
 
 export default async function Home({
     params,
+    searchParams,
 } : {
-    params: { [key: string]: string | string[] | undefined};
+    params: { instructor: string };
+    searchParams: { id?: string };
 }) {
     const session = await getSession();
     const user = session?.user as User;
-
-    const id = params.id as string;
-
+    
+    // Extrage ID-ul din query parameters
+    const resolvedSearchParams = await searchParams;
+    const id = resolvedSearchParams.id;
+    
+    if (!id) {
+        // Dacă nu avem ID, redirecționăm la pagina principală sau afișăm o eroare
+        return redirect('/dashboard/instructors'); // sau pagina de eroare
+    }
+    
     const instructor = await getInstructor({ id });
-
     if(!instructor) {
         return <div>Instructorul nu a fost găsit.</div>;
     }
-
+    
     const { services, timeslots, dcost, lcost } = instructor;
-
+    
     return (
         <>
             <Header />
