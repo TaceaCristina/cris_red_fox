@@ -68,14 +68,14 @@ const AddInstructorForm = ({ userId }: Props) => {
     // Router pentru navigare
     const router = useRouter();
     
-    // Folosim un ref pentru a urmări starea componentei
-    const isMountedRef = useRef(false);
     // State pentru detectarea renderizării pe client
     const [isClient, setIsClient] = useState(false);
     // State pentru a urmări/afișa încărcarea imaginii
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [dragActive, setDragActive] = useState(false);
+    const [areas, setAreas] = useState<string[]>([]);
+    const [areasInput, setAreasInput] = useState("");
     
     // Inițializăm formularul cu valori implicite
     const form = useForm<InstructorValues>({
@@ -95,20 +95,6 @@ const AddInstructorForm = ({ userId }: Props) => {
         }
     });
 
-    // Inițializăm starea pentru zone
-    const [areas, setAreas] = useState<string[]>([]);
-    const [areasInput, setAreasInput] = useState("");
-    
-    // Setăm starea client-side în siguranță
-    useEffect(() => {
-        isMountedRef.current = true;
-        setIsClient(true);
-        
-        return () => {
-            isMountedRef.current = false;
-        };
-    }, []);
-
     const {
         handleSubmit,
         control,
@@ -120,61 +106,42 @@ const AddInstructorForm = ({ userId }: Props) => {
 
     // Monitorizăm schimbările în câmpul de imagine
     const imageField = watch("image");
-    
-    // Actualizăm previzualizarea când se schimbă fișierul de imagine
+
+    // Setăm starea client-side în siguranță
     useEffect(() => {
-        if (imageField instanceof File) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string);
-            };
-            reader.readAsDataURL(imageField);
-        } else {
-            setImagePreview(null);
+        setIsClient(true);
+    }, []);
+
+    // Handler pentru adăugarea unei zone
+    const handleAddArea = () => {
+        if (areasInput.trim() && !areas.includes(areasInput.trim())) {
+            setAreas(prev => [...prev, areasInput.trim()]);
+            setAreasInput("");
         }
-    }, [imageField]);
-    
-    // Funcție pentru a procesa un fișier de imagine (validare și adăugare)
-    const handleImageFile = (file: File | null) => {
-        if (!file) return;
-        
-        // Verificăm dacă este o imagine
-        if (!file.type.startsWith('image/')) {
-            toast.error('Vă rugăm să selectați un fișier imagine valid.');
-            return;
-        }
-        
-        // Verificăm dimensiunea (maxim 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            toast.error('Imaginea trebuie să fie mai mică de 2MB.');
-            return;
-        }
-        
-        // Setăm fișierul în formular
-        setValue('image', file);
     };
 
-    // Gestionează adăugarea unei zone în siguranță
-    const handleAddArea = () => {
-        if (!areasInput.trim() || !isMountedRef.current) return;
-        
-        setAreas(prevAreas => [...prevAreas, areasInput.trim()]);
-        setAreasInput("");
+    // Handler pentru ștergerea unei zone
+    const handleRemoveArea = (areaToRemove: string) => {
+        setAreas(prev => prev.filter(area => area !== areaToRemove));
     };
-    
-    // Gestionează eliminarea unei zone în siguranță
-    const handleRemoveArea = (indexToRemove: number) => {
-        if (!isMountedRef.current) return;
-        
-        setAreas(prevAreas => 
-            prevAreas.filter((_, index) => index !== indexToRemove)
-        );
+
+    // Handler pentru fișierul de imagine
+    const handleImageFile = (file: File) => {
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error("Fișierul este prea mare. Dimensiunea maximă permisă este de 2MB.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+        setValue("image", file);
     };
 
     // Handler pentru trimiterea formularului
     async function onSubmit(values: InstructorValues) {
-        if (!isMountedRef.current) return;
-        
         setUploading(true);
         
         try {
@@ -426,7 +393,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                                                     setDragActive(false);
                                                     
                                                     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                                                        handleImageFile(e.dataTransfer.files[0]);
+                                                        handleImageFile(e.dataTransfer.files[0] as File);
                                                     }
                                                 }}
                                             >
@@ -597,7 +564,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                                                 <button
                                                     type="button"
                                                     className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
-                                                    onClick={() => handleRemoveArea(index)}
+                                                    onClick={() => handleRemoveArea(value)}
                                                 >
                                                     ×
                                                 </button>
