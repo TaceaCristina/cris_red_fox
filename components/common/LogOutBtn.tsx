@@ -23,12 +23,12 @@ const LogOutBtn = ({ withTooltip = false }) => {
           </button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Log Out</p>
+          <p>Deconectare</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   ) : (
-    <button onClick={handleSignOut}>LogOut</button>
+    <button onClick={handleSignOut}>Deconectare</button>
   );
 };
 
