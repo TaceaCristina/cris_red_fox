@@ -5,7 +5,7 @@ export default function AuthForm({ callbackUrl }: { callbackUrl: string }) {
   return (
     <div className="flex flex-col items-center justify-center gap-8 text-xs uppercase">
       <span className="bg-background px-2 text-muted-foreground">
-        Continue with
+        Continuă cu
       </span>
       <div className="flex gap-12">
         {Object.values(providerMap).map((provider) => (
