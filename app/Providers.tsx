@@ -1,5 +1,4 @@
 "use client";
-
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes";
 import { Toaster } from "react-hot-toast";
@@ -15,7 +14,6 @@ const Providers = ({
   userId,
   ...props
 }: ThemeProviderProps & ProviderProps) => {
-  // Verificăm dacă userId există ȘI nu este string gol
   const hasValidUserId = userId && userId.trim() !== "";
 
   return (
@@ -33,8 +31,12 @@ const Providers = ({
           </KnockFeedProvider>
         </KnockProvider>
       ) : (
-        // Dacă nu avem un userId valid, renderăm doar copiii fără KnockProvider
-        children
+        // Oferim un provider gol pentru cazurile fără userId
+        <KnockProvider apiKey="" userId="">
+          <KnockFeedProvider feedId="">
+            {children}
+          </KnockFeedProvider>
+        </KnockProvider>
       )}
     </NextThemesProvider>
   );

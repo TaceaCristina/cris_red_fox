@@ -2,8 +2,6 @@
 
 import { userAccountSchema } from "@/lib/zod-validations";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
-
 
 type UpdateUserArgs = {
   formData: FormData;
@@ -24,12 +22,12 @@ export async function UpdateUser({ formData, id }: UpdateUserArgs) {
         address,
       },
     });
+
+    return { success: true };
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error); 
     }
-    return { message: "An unexpected error occurred." };
+    return { success: false, message: "An unexpected error occurred." };
   } 
-  
-  redirect("/user");
 }
