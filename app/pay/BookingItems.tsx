@@ -60,8 +60,8 @@ const BookingItems = () => {
                 <TableCell className=" p-2">
                   {format(booking.date, "dd-MM-yyyy")}
                 </TableCell>
-                <TableCell className=" p-2">{booking.type}</TableCell>
-                <TableCell className=" p-2">{booking.cost}</TableCell>
+                <TableCell className=" p-2">{booking.type === "DRIVING" ? "CONDUS" : "ÎNVĂȚARE"}</TableCell>
+                <TableCell className=" p-2">{booking.cost} RON</TableCell>
                 <TableCell className=" p-2">{booking.times.length}</TableCell>
                 <TableCell className=" p-2">
                   <Button

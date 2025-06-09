@@ -143,30 +143,25 @@ export async function suspendUser(userId: string) {
     if (user.role === "ADMIN") {
       throw new Error("Nu poți suspenda un administrator");
     }
-    // Verifică dacă utilizatorul este instructor
+    // Șterge toate rezervările (bookings) asociate userului
+    await prisma.booking.deleteMany({ where: { userId } });
+    // Șterge toate conturile (accounts) asociate userului
+    await prisma.account.deleteMany({ where: { userId } });
+    // Șterge toate sesiunile (sessions) asociate userului
+    await prisma.session.deleteMany({ where: { userId } });
+    // Șterge toate token-urile de verificare asociate userului (dacă există)
+    await prisma.verificationToken.deleteMany({ where: { identifier: user.email } });
+    // Dacă userul este instructor, șterge time slots și profilul instructorului
     if (user.role === "INSTRUCTOR") {
-      // Verifică dacă există un profil de instructor și șterge-l dacă există
-      const instructorProfile = await prisma.instructor.findFirst({
-        where: { userId: userId }
-      });
+      const instructorProfile = await prisma.instructor.findFirst({ where: { userId } });
       if (instructorProfile) {
-        // Șterge orice înregistrări legate de instructor
-        // Șterge mai întâi fiecare TimeSlot asociat instructorului
-        await prisma.timeSlots.deleteMany({
-          where: { instructorId: instructorProfile.id }
-        });
-       
-        // Apoi șterge profilul instructorului
-        await prisma.instructor.delete({
-          where: { id: instructorProfile.id }
-        });
+        await prisma.timeSlots.deleteMany({ where: { instructorId: instructorProfile.id } });
+        await prisma.instructor.delete({ where: { id: instructorProfile.id } });
       }
     }
     // Șterge utilizatorul
-    await prisma.user.delete({
-      where: { id: userId },
-    });
-    return { success: true, message: "Utilizatorul a fost suspendat cu succes" };
+    await prisma.user.delete({ where: { id: userId } });
+    return { success: true, message: "Utilizatorul și toate datele asociate au fost șterse cu succes" };
   } catch (error) {
     const err = error as Error;
     return {

@@ -43,6 +43,12 @@ export default function EditBooking({
 
   const BookingStatus = ["PENDING", "CANCELLED", "COMPLETED"] as const;
 
+  const statusMap: Record<string, string> = {
+    PENDING: "ÎN AȘTEPTARE",
+    CANCELLED: "ANULATĂ",
+    COMPLETED: "FINALIZATĂ",
+  };
+
   const formSchema = z.object({
     status: z.enum(BookingStatus),
   });
@@ -99,19 +105,17 @@ export default function EditBooking({
                           )}
                         >
                           {field.value
-                            ? BookingStatus.find(
-                                (statuz) => statuz === field.value,
-                              )
-                            : "Selectează un rol"}
+                            ? statusMap[field.value]
+                            : "Selectează un status"}
                           <PiCaretUpDownBold className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-[200px] p-0">
                       <Command>
-                        <CommandInput placeholder="Caută un rol..." />
+                        <CommandInput placeholder="Caută un status..." />
                         <CommandList>
-                          <CommandEmpty>Niciun rol găsit.</CommandEmpty>
+                          <CommandEmpty>Niciun status găsit.</CommandEmpty>
                           <CommandGroup>
                             {BookingStatus.map((statuz, i) => (
                               <CommandItem
@@ -129,7 +133,7 @@ export default function EditBooking({
                                       : "opacity-0",
                                   )}
                                 />
-                                {statuz}
+                                {statusMap[statuz]}
                               </CommandItem>
                             ))}
                           </CommandGroup>

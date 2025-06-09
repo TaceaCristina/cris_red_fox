@@ -8,6 +8,7 @@ import { PaymentMethod } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { Knock } from "@knocklabs/node";
 import { stripe } from "@/lib/stripe";
+import { revalidatePath } from "next/cache";
 
 const knock = new Knock(process.env.KNOCK_SECRET_KEY);
 
@@ -71,6 +72,7 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
         where: { id: instructorTimeSlots.id },
         data: { times: updatedTimes },
       });
+      // console.log(`Updated times for slot ${instructorTimeSlots.id}:`, updatedTimes);
     }
 
     // Pentru plata cu cardul, inițial marcăm ca neplătit și va fi actualizat de webhook
@@ -110,6 +112,13 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
     await prisma.booking.createMany({
       data: modifiedBookings,
     });
+
+    // Revalidate the instructor's page to show updated time slots
+    // Removed as it was causing unintended redirect/revalidation for the user.
+    // for (const instructorId of instructorIds) {
+    //   revalidatePath(`/instructor?id=${instructorId}`);
+    // }
+
   } catch (error) {
     console.error("Eroare la crearea rezervărilor:", error);
     throw new Error("Nu s-au putut crea rezervările. Verificați datele și încercați din nou.");
@@ -167,7 +176,7 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
   }
 
   // Redirecționăm utilizatorul către pagina de rezervări
-  redirect("/user/bookings");
+  // redirect("/user/bookings");
 }
 
 export async function createPaymentIntent(bookings: BookingToAdd[]) {

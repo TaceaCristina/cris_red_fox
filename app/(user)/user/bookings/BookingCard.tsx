@@ -26,16 +26,16 @@ const BookingCard = ({ booking, img, name, phone }: BookingCardProps) => {
     <Card className="p-0">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <Badge variant="outline">{booking.type}</Badge>
-          <p className="text-lg">${booking.cost}</p>
+          <Badge variant="outline">{booking.type === "DRIVING" ? "CONDUS" : "ÎNVĂȚARE"}</Badge>
+          <p className="text-lg">{booking.cost} RON</p>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center py-1 sm:flex-row sm:justify-between">
         <p>
-          Date:{" "}
+          Data: {" "}
           <span className="font-bold">
-            {format(booking.date, "dd/MM/yyyy")}{" "}
-          </span>{" "}
+            {format(booking.date, "dd/MM/yyyy")} {" "}
+          </span> {" "}
         </p>
         <DialogWrapper
           isBtn

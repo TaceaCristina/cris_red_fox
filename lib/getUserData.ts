@@ -70,8 +70,28 @@ async function fetchInstructor(where: object) {
         timeslots: true,
       },
     });
+    if (!instructor) return null;
 
-    return instructor;
+    // Ia toate booking-urile pentru acest instructor
+    const bookings = await prisma.booking.findMany({
+      where: { instructorId: instructor.id },
+      select: { date: true, type: true, times: true },
+    });
+
+    // Pentru fiecare timeslot, elimină orele deja rezervate
+    const filteredTimeslots = instructor.timeslots.map((slot) => {
+      const bookingsForSlot = bookings.filter(
+        (b) =>
+          b.type === slot.type &&
+          b.date.toISOString().slice(0, 10) === slot.date.toISOString().slice(0, 10)
+      );
+      const bookedTimes = bookingsForSlot.flatMap((b) => b.times.map((t) => new Date(t).getTime()));
+      const availableTimes = slot.times.filter((t) => !bookedTimes.includes(new Date(t).getTime()));
+      return { ...slot, times: availableTimes };
+    });
+
+    // console.log("Filtered timeslots before returning to frontend:", filteredTimeslots);
+    return { ...instructor, timeslots: filteredTimeslots };
   } catch (error) {
     console.error("Error fetching instructor:", error);
     throw new Error("Error fetching instructor");

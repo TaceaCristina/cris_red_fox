@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { draftToMarkdown } from "markdown-draft-js";
 import { useRouter } from "next/navigation";
@@ -67,16 +67,12 @@ type Props = {
 const AddInstructorForm = ({ userId }: Props) => {
     // Router pentru navigare
     const router = useRouter();
-    
-    // State pentru detectarea renderizării pe client
-    const [isClient, setIsClient] = useState(false);
     // State pentru a urmări/afișa încărcarea imaginii
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [dragActive, setDragActive] = useState(false);
     const [areas, setAreas] = useState<string[]>([]);
     const [areasInput, setAreasInput] = useState("");
-    
     // Inițializăm formularul cu valori implicite
     const form = useForm<InstructorValues>({
         resolver: zodResolver(InstructorSchema),
@@ -94,7 +90,6 @@ const AddInstructorForm = ({ userId }: Props) => {
             services: "",
         }
     });
-
     const {
         handleSubmit,
         control,
@@ -103,30 +98,24 @@ const AddInstructorForm = ({ userId }: Props) => {
         watch,
         formState: { isSubmitting },
     } = form;
-
     // Monitorizăm schimbările în câmpul de imagine
     const imageField = watch("image");
 
-    // Setăm starea client-side în siguranță
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
     // Handler pentru adăugarea unei zone
-    const handleAddArea = () => {
+    const handleAddArea = useCallback(() => {
         if (areasInput.trim() && !areas.includes(areasInput.trim())) {
             setAreas(prev => [...prev, areasInput.trim()]);
             setAreasInput("");
         }
-    };
+    }, [areasInput, areas]);
 
     // Handler pentru ștergerea unei zone
-    const handleRemoveArea = (areaToRemove: string) => {
+    const handleRemoveArea = useCallback((areaToRemove: string) => {
         setAreas(prev => prev.filter(area => area !== areaToRemove));
-    };
+    }, []);
 
     // Handler pentru fișierul de imagine
-    const handleImageFile = (file: File) => {
+    const handleImageFile = useCallback((file: File) => {
         if (file.size > 2 * 1024 * 1024) {
             toast.error("Fișierul este prea mare. Dimensiunea maximă permisă este de 2MB.");
             return;
@@ -138,10 +127,10 @@ const AddInstructorForm = ({ userId }: Props) => {
         };
         reader.readAsDataURL(file);
         setValue("image", file);
-    };
+    }, [setValue]);
 
     // Handler pentru trimiterea formularului
-    async function onSubmit(values: InstructorValues) {
+    const onSubmit = useCallback(async (values: InstructorValues) => {
         setUploading(true);
         
         try {
@@ -180,16 +169,7 @@ const AddInstructorForm = ({ userId }: Props) => {
         } finally {
             setUploading(false);
         }
-    }
-
-    // Dacă nu suntem pe client, afișăm un indicator de încărcare
-    if (!isClient) {
-        return (
-            <div className="flex items-center justify-center h-full w-full p-4">
-                <div className="animate-pulse">Se încarcă formularul...</div>
-            </div>
-        );
-    }
+    }, [areas, userId, router]);
 
     return (
         <div className="w-full h-full bg-background p-4">
@@ -263,25 +243,23 @@ const AddInstructorForm = ({ userId }: Props) => {
                         )}
                     />
 
-                    {isClient && (
-                        <FormField
-                            control={control}
-                            name="bio"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <Label onClick={() => isClient && setFocus("bio")}>Biografie</Label>
-                                    <FormControl>
-                                        <TextEditor
-                                            onChange={(rawContent: RawDraftContentState) => 
-                                                field.onChange(draftToMarkdown(rawContent))
-                                            }
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    )}
+                    <FormField
+                        control={control}
+                        name="bio"
+                        render={({ field }) => (
+                            <FormItem>
+                                <Label>Biografie</Label>
+                                <FormControl>
+                                    <TextEditor
+                                        onChange={(rawContent: RawDraftContentState) => 
+                                            field.onChange(draftToMarkdown(rawContent))
+                                        }
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
                     <FormField
                         control={control}
@@ -290,7 +268,7 @@ const AddInstructorForm = ({ userId }: Props) => {
                             <FormItem>
                                 <FormLabel>Certificat</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="certificate" {...field}/>
+                                    <Input placeholder="certificat" {...field}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -584,27 +562,23 @@ const AddInstructorForm = ({ userId }: Props) => {
                         </div>
                     </div>
 
-                    {isClient && (
-                        <FormField
-                            control={control}
-                            name="services"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <Label onClick={() => isClient && setFocus("services")}>
-                                        Servicii oferite
-                                    </Label>
-                                    <FormControl>
-                                        <TextEditor
-                                            onChange={(rawContent: RawDraftContentState) => 
-                                                field.onChange(draftToMarkdown(rawContent))
-                                            }
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    )}
+                    <FormField
+                        control={control}
+                        name="services"
+                        render={({ field }) => (
+                            <FormItem>
+                                <Label>Servicii oferite</Label>
+                                <FormControl>
+                                    <TextEditor
+                                        onChange={(rawContent: RawDraftContentState) => 
+                                            field.onChange(draftToMarkdown(rawContent))
+                                        }
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     
                     <div className="pt-4">
                         <LoadingBtn type="submit" loading={isSubmitting || uploading} className="w-full">

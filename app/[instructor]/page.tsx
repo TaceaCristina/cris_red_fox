@@ -23,7 +23,7 @@ export default async function Home({
     
     if (!id) {
         // Dacă nu avem ID, redirecționăm la pagina principală sau afișăm o eroare
-        return redirect('/dashboard/instructors'); // sau pagina de eroare
+        return redirect('/user/bookings'); // Redirect to sessions page for users
     }
     
     const instructor = await getInstructor({ id });

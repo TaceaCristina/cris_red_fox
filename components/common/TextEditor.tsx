@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState, useCallback } from "react";
 import { EditorState, convertToRaw, RawDraftContentState } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
@@ -58,9 +58,10 @@ const TextEditor = forwardRef<object, CustomEditorProps>(function TextEditor(pro
   // Prima useEffect pentru a gestiona detecția clientului și montarea componentei
   useEffect(() => {
     isMountedRef.current = true;
-    setIsClient(true);
     
+    // Setăm starea client-side doar dacă suntem în browser
     if (typeof window !== 'undefined') {
+      setIsClient(true);
       setEditorState(EditorState.createEmpty());
     }
     
@@ -70,7 +71,7 @@ const TextEditor = forwardRef<object, CustomEditorProps>(function TextEditor(pro
   }, []);
 
   // Gestionarea schimbărilor în editor
-  const handleEditorChange = (state: EditorState) => {
+  const handleEditorChange = useCallback((state: EditorState) => {
     if (!isMountedRef.current) return;
     
     setEditorState(state);
@@ -81,7 +82,7 @@ const TextEditor = forwardRef<object, CustomEditorProps>(function TextEditor(pro
       const rawContent = convertToRaw(contentState);
       props.onChange(rawContent);
     }
-  };
+  }, [props.onChange]);
 
   // Dacă nu suntem pe client sau editorul nu este încărcat, afișăm un placeholder
   if (!isClient || !editorState) {

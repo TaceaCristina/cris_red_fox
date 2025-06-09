@@ -30,7 +30,7 @@ export function AdminCharts({ bookings, timeSlots }: AdminChartsProps) {
   }, {} as Record<LessonType, number>);
 
   const lessonTypeData = Object.entries(lessonTypeStats).map(([name, value]) => ({
-    name: name === 'DRIVING' ? 'Conducere' : 'Perfecționare',
+    name: name === 'DRIVING' ? 'CONDUS' : 'ÎNVĂȚARE',
     value
   }));
 

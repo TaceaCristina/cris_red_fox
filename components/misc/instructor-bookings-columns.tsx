@@ -46,7 +46,7 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
     header: "Tipul lecției",
     cell: ({ row }) => {
       const { type } = row.original;
-      return <Badge>{type}</Badge>;
+      return <Badge>{type === "DRIVING" ? "CONDUS" : "ÎNVĂȚARE"}</Badge>;
     },
   },
   {
@@ -85,7 +85,11 @@ const InstructorBookingsColumns: ColumnDef<BookingWithUser>[] = [
     header: "Status",
     cell: ({ row }) => {
       const { status } = row.original;
-      return <Badge>{status}</Badge>;
+      let statusLabel = status;
+      if (status === "PENDING") statusLabel = "ÎN AȘTEPTARE";
+      if (status === "CANCELLED") statusLabel = "ANULATĂ";
+      if (status === "COMPLETED") statusLabel = "FINALIZATĂ";
+      return <Badge>{statusLabel}</Badge>;
     },
   },
   {

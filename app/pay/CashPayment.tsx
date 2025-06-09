@@ -5,24 +5,45 @@ import { GiPayMoney } from "react-icons/gi";
 import { useState } from "react";
 import LoadingBtn from "@/components/common/LoadingBtn";
 import { addBookings } from "./actions";
+import { useRouter } from "next/navigation";
 
 const CashPayment = ({ method }: { method: string }) => {
   const [loading, setLoading] = useState(false);
 
   const { bookings, resetBooking } = useBookingStore();
+  const router = useRouter();
 
   const payMethod = method.toUpperCase();
 
-  async function onSubmit() {
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
     try {
       setLoading(true);
       await addBookings({ bookings, payMethod });
+      
+      // Log before clearing cart and redirecting
+      console.log("Bookings before reset:", bookings);
+
+      // Clear the cart and reset state
       resetBooking();
-      setLoading(false);
-    }  catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error); // opțional
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("ședințe");
       }
+      if (useBookingStore.persist && useBookingStore.persist.rehydrate) {
+        useBookingStore.persist.rehydrate();
+      }
+
+      // Log after clearing cart and before redirect
+      console.log("Bookings after reset and localStorage clear:", useBookingStore.getState().bookings);
+      console.log("Attempting to redirect to /user/bookings");
+      setLoading(false);
+      // Redirect to sessions page
+      router.push("/user/bookings");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+      }
+      setLoading(false);
       return { message: "An unexpected error occurred." };
     }
   }

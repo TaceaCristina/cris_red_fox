@@ -38,7 +38,7 @@ export default async function AddInstructorPage({
   const isInstructor = getIsInstructor?.instructor;
   
   if (isInstructor) {
-    redirect("/dashboard/instructors");
+    redirect("/user/bookings");
   }
   
   return (

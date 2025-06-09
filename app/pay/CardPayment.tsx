@@ -10,11 +10,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Check, AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Componenta Stripe Card Wrapper
 const CardPayment = ({ method }: { method: string }) => {
   const [stripeError, setStripeError] = useState<string | null>(null);
   const stripePromise = getStripe();
+  const router = useRouter();
 
   useEffect(() => {
     // Verificăm dacă cheia publică Stripe este disponibilă
@@ -49,6 +51,7 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
   const [succeeded, setSucceeded] = useState(false);
   const [clientSecret, setClientSecret] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
+  const router = useRouter();
 
   const payMethod = method.toUpperCase();
 
@@ -133,6 +136,16 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
         // Adaugă rezervări în baza de date
         await addBookings({ bookings, payMethod });
         resetBooking();
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("ședințe");
+        }
+        if (useBookingStore.persist && useBookingStore.persist.rehydrate) {
+          useBookingStore.persist.rehydrate();
+        }
+
+        // Redirect to sessions page
+        router.push("/user/bookings");
+        setTimeout(() => window.location.reload(), 300);
       } else {
         setError(`Plata este ${paymentIntent.status}. Vă rugăm să încercați din nou.`);
       }

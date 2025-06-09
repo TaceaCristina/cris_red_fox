@@ -22,7 +22,7 @@ export default async function UserLayout({
       </aside>
 
       <div className="mx-6 w-full flex-1 p-5">
-        <DashHeader title="User Portal" />
+        <DashHeader title="Portal Utilizator" />
 
         {children}
       </div>

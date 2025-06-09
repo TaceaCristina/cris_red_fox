@@ -27,21 +27,17 @@ const TimeSelector = ({
   lcost,
   instructorId,
 }: TimeSelectorProps) => {
-  const [selectedTimes, setSelectedTimes] = useState<{ [key: string]: Date[] }>(
-    {},
-  );
+  const [selectedTimes, setSelectedTimes] = useState<{ [key: string]: Date[] }>({});
   const { selectedDate } = useDateData();
   const { lessonType } = useLessonTypeStore();
   const { addToBooking } = useBookingStore();
 
   const timeSlotsByType = timeSlots?.filter((slot) => slot.type === lessonType);
-
   const formattedSelectedDate = format(selectedDate, "yyyy-MM-dd");
   const timesSlotsByDate = timeSlotsByType?.filter(
     (times) => format(times.date, "yyyy-MM-dd") === formattedSelectedDate,
   )[0];
-
-  const timesToSelect = timesSlotsByDate?.times;
+  const timesToSelect = (timesSlotsByDate?.times || []).map((t) => new Date(t));
 
   const handleTimeClick = (time: Date) => {
     const dateKey = format(selectedDate as Date, "yyyy-MM-dd"); //String Date Key which is kept in format as 2024-04-26
@@ -72,15 +68,13 @@ const TimeSelector = ({
       toast.error("Logează-te mai întâi pentru a programa o ședință", { duration: 3000 });
       return;
     }
-
     let cost;
-    if (lessonType === " DRIVING") {
+    if (lessonType === "DRIVING") {
       cost = dcost;
     } else {
       cost = lcost;
     }
     const selectedTimesArray = Object.values(selectedTimes).flat();
-
     const correctedTimes = selectedTimesArray.map((time) => {
       const day = new Date(selectedDate);
       const fullDate = new Date(day);
@@ -91,7 +85,6 @@ const TimeSelector = ({
       return fullDate;
     });
     const bookingDate = format(selectedDate, "yyyy-MM-dd");
-
     const item = {
       date: bookingDate,
       times: correctedTimes,
@@ -99,14 +92,12 @@ const TimeSelector = ({
       type: lessonType as LessonType,
       instructorId,
     };
-    const result = addToBooking(item); // Capture the result from addToBooking
+    const result = addToBooking(item);
     if (result && result.message) {
       if (result.message === "succes") {
         toast.success("Ședință adăugată", { duration: 3000 });
       } else {
-        toast.error("Vă rugăm să finalizați mai întâi rezervările din coș.", {
-          duration: 3000,
-        });
+        toast.error("Vă rugăm să finalizați mai întâi rezervările din coș.", { duration: 3000 });
       }
     }
   };

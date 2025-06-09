@@ -36,7 +36,7 @@ export function makeSlug(str: string): string {
 }
 
 export function generateBookingNumber(): string {
-  const prefix = "MOT";
+  const prefix = "REDFOX";
   const letters = "abcdefghijklmnopqrstuvwxyz";
  
   // Generate two random lowercase alphabetical letters

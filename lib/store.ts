@@ -59,17 +59,41 @@ import {
   
           addToBooking(item) {
             const bookings = get().bookings;
-            const checkItem = bookings.find(
+            const existingBookingIndex = bookings.findIndex(
               (booking) =>
                 booking.date === item.date &&
                 booking.instructorId === item.instructorId,
             );
-            if (!checkItem) {
-              set({ bookings: [...bookings, item] });
+
+            if (existingBookingIndex !== -1) {
+              // Dacă există deja o rezervare pentru această dată și instructor, actualizăm intervalele orare
+              const existingBooking = bookings[existingBookingIndex];
+              const newTimes = [...existingBooking.times];
+
+              // Adăugăm noi intervale orare din item.times, evitând duplicatele
+              item.times.forEach(newTime => {
+                // Convertim ambele date în stringuri ISO (doar ora și minutul) pentru o comparație sigură
+                const newTimeISO = newTime.toISOString().slice(11, 16);
+                if (!newTimes.some(existingTime => {
+                  const existingTimeDate = new Date(existingTime);
+                  return existingTimeDate.toISOString().slice(11, 16) === newTimeISO;
+                })) {
+                  newTimes.push(newTime);
+                }
+              });
+
+              // Actualizăm rezervarea existentă cu intervalele orare consolidate
+              const updatedBookings = [...bookings];
+              updatedBookings[existingBookingIndex] = {
+                ...existingBooking,
+                times: newTimes,
+              };
+              set({ bookings: updatedBookings });
               return { message: `succes` };
             } else {
-              set({ bookings: [...bookings] });
-              return { message: `există` };
+              // Dacă nu există o rezervare existentă, adăugăm noul item
+              set({ bookings: [...bookings, item] });
+              return { message: `succes` };
             }
           },
           deleteBooking(itemDate: string) {
