@@ -33,8 +33,6 @@ export default async function Home({
     
     const { services, timeslots, dcost, lcost } = instructor;
 
-    console.log(`Timeslots received for instructor ${id}:`, timeslots);
-    
     return (
         <>
             <Header />

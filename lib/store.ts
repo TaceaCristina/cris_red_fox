@@ -104,7 +104,9 @@ import {
             set({ bookings: updatedBookings });
           },
           resetBooking() {
+            console.log("Before reset - bookings:", get().bookings);
             set(INITIAL_STATE);
+            console.log("After reset - bookings:", get().bookings);
           },
         }),
         { name: "ședințe", skipHydration: true },

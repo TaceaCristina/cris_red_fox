@@ -79,7 +79,7 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
         where: { id: instructorTimeSlots.id },
         data: { times: updatedTimes },
       });
-      console.log(`Updated time slot for ${instructorTimeSlots.id}:`, updatedTimeSlot);
+      // console.log(`Updated time slot for ${instructorTimeSlots.id}:`, updatedTimeSlot);
     }
 
     // Pentru plata cu cardul, inițial marcăm ca neplătit și va fi actualizat de webhook
@@ -119,12 +119,12 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
     const createdBookings = await prisma.booking.createMany({
       data: modifiedBookings,
     });
-    console.log("Created bookings in DB:", createdBookings);
+    // console.log("Created bookings in DB:", createdBookings);
 
     // Revalidate the instructor's page to show updated time slots
     for (const instructorId of instructorIds) {
       revalidatePath(`/instructor?id=${instructorId}`);
-      console.log(`Revalidating path for instructor ID: ${instructorId}`);
+      // console.log(`Revalidating path for instructor ID: ${instructorId}`);
     }
 
   } catch (error) {
@@ -183,8 +183,7 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
     }
   }
 
-  // Redirecționăm utilizatorul către pagina de rezervări
-  // redirect("/user/bookings");
+  return { success: true };
 }
 
 export async function createPaymentIntent(bookings: BookingToAdd[]) {

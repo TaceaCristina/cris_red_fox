@@ -48,7 +48,6 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
   const { bookings, resetBooking } = useBookingStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [succeeded, setSucceeded] = useState(false);
   const [clientSecret, setClientSecret] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
   const router = useRouter();
@@ -132,9 +131,7 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
       if (paymentError) {
         setError(paymentError.message || "A apărut o eroare la procesarea plății.");
       } else if (paymentIntent.status === "succeeded") {
-        setSucceeded(true);
-        // Adaugă rezervări în baza de date
-        await addBookings({ bookings, payMethod });
+        // Clear the cart and reset state first
         resetBooking();
         if (typeof window !== "undefined") {
           localStorage.removeItem("ședințe");
@@ -143,9 +140,11 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
           useBookingStore.persist.rehydrate();
         }
 
-        // Redirect to sessions page
+        // Adaugă rezervări în baza de date
+        await addBookings({ bookings, payMethod });
+        
+        // Handle redirection on client side
         router.push("/user/bookings");
-        setTimeout(() => window.location.reload(), 300);
       } else {
         setError(`Plata este ${paymentIntent.status}. Vă rugăm să încercați din nou.`);
       }
@@ -156,17 +155,6 @@ const StripeCardPaymentForm = ({ method }: { method: string }) => {
 
     setLoading(false);
   };
-
-  if (succeeded) {
-    return (
-      <Alert className="bg-green-50 border-green-200">
-        <Check className="h-5 w-5 text-green-600" />
-        <AlertDescription className="text-green-700">
-          Plata a fost procesată cu succes! Vă redirecționăm către rezervările dvs...
-        </AlertDescription>
-      </Alert>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit}>
