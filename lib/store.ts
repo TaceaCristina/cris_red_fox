@@ -12,8 +12,8 @@ import {
     devtools(
       persist(
         (set, get) => ({
-          selectedDate: new Date(),
-          setDate: (value: Date) => {
+          selectedDate: null,
+          setDate: (value: Date | null) => {
             set({ selectedDate: value });
           },
   

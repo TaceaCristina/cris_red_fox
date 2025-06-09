@@ -1,9 +1,9 @@
 import { LessonType } from "@prisma/client";
 
 export type DateStore = {
-    selectedDate: Date;
-    setDate: (value: Date) => void;
-    getDateData: () => Date;
+    selectedDate: Date | null;
+    setDate: (value: Date | null) => void;
+    getDateData: () => Date | null;
   };
   
   export type LessonTypeTypes = {

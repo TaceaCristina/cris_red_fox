@@ -61,18 +61,25 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
 
     if (instructorTimeSlots) {
       const updatedTimes = instructorTimeSlots.times.filter(
-        (time) =>
-          !timesToRemove.some(
-            (removeTime) => removeTime.getTime() === time.getTime(),
-          ),
+        (time) => {
+          const timeToCompare = new Date(time);
+          const formattedTime = `${timeToCompare.getHours().toString().padStart(2, '0')}:${timeToCompare.getMinutes().toString().padStart(2, '0')}`;
+          return !timesToRemove.some(
+            (removeTime) => {
+              const removeTimeCompare = new Date(removeTime);
+              const formattedRemoveTime = `${removeTimeCompare.getHours().toString().padStart(2, '0')}:${removeTimeCompare.getMinutes().toString().padStart(2, '0')}`;
+              return formattedRemoveTime === formattedTime;
+            }
+          );
+        }
       );
 
       // Update the instructorTimeSlots with the filtered times to remove already selected times
-      await prisma.timeSlots.update({
+      const updatedTimeSlot = await prisma.timeSlots.update({
         where: { id: instructorTimeSlots.id },
         data: { times: updatedTimes },
       });
-      // console.log(`Updated times for slot ${instructorTimeSlots.id}:`, updatedTimes);
+      console.log(`Updated time slot for ${instructorTimeSlots.id}:`, updatedTimeSlot);
     }
 
     // Pentru plata cu cardul, inițial marcăm ca neplătit și va fi actualizat de webhook
@@ -109,15 +116,16 @@ export async function addBookings({ bookings, payMethod }: AddBookingArgs) {
 
   try {
     // Insert modified bookings into the database
-    await prisma.booking.createMany({
+    const createdBookings = await prisma.booking.createMany({
       data: modifiedBookings,
     });
+    console.log("Created bookings in DB:", createdBookings);
 
     // Revalidate the instructor's page to show updated time slots
-    // Removed as it was causing unintended redirect/revalidation for the user.
-    // for (const instructorId of instructorIds) {
-    //   revalidatePath(`/instructor?id=${instructorId}`);
-    // }
+    for (const instructorId of instructorIds) {
+      revalidatePath(`/instructor?id=${instructorId}`);
+      console.log(`Revalidating path for instructor ID: ${instructorId}`);
+    }
 
   } catch (error) {
     console.error("Eroare la crearea rezervărilor:", error);

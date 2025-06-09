@@ -77,16 +77,40 @@ async function fetchInstructor(where: object) {
       where: { instructorId: instructor.id },
       select: { date: true, type: true, times: true },
     });
+    console.log("All bookings for instructor:", bookings);
 
     // Pentru fiecare timeslot, elimină orele deja rezervate
     const filteredTimeslots = instructor.timeslots.map((slot) => {
       const bookingsForSlot = bookings.filter(
-        (b) =>
-          b.type === slot.type &&
-          b.date.toISOString().slice(0, 10) === slot.date.toISOString().slice(0, 10)
+        (b) => {
+          const bookingDate = new Date(b.date);
+          const slotDate = new Date(slot.date);
+
+          console.log(`Comparing bookingDate: ${bookingDate.toISOString()} (type: ${typeof b.date}) vs slotDate: ${slotDate.toISOString()} (type: ${typeof slot.date})`);
+          console.log(`Year match: ${bookingDate.getFullYear()} === ${slotDate.getFullYear()} -> ${bookingDate.getFullYear() === slotDate.getFullYear()}`);
+          console.log(`Month match: ${bookingDate.getMonth()} === ${slotDate.getMonth()} -> ${bookingDate.getMonth() === slotDate.getMonth()}`);
+          console.log(`Date match: ${bookingDate.getDate()} === ${slotDate.getDate()} -> ${bookingDate.getDate() === slotDate.getDate()}`);
+
+          // Compare only the date part (year, month, day) in a timezone-agnostic way
+          return b.type === slot.type &&
+                 bookingDate.getFullYear() === slotDate.getFullYear() &&
+                 bookingDate.getMonth() === slotDate.getMonth() &&
+                 bookingDate.getDate() === slotDate.getDate();
+        }
       );
-      const bookedTimes = bookingsForSlot.flatMap((b) => b.times.map((t) => new Date(t).getTime()));
-      const availableTimes = slot.times.filter((t) => !bookedTimes.includes(new Date(t).getTime()));
+      console.log("Bookings for current slot:", bookingsForSlot);
+      const bookedTimes = bookingsForSlot.flatMap((b) =>
+        b.times.map((t) => {
+          const date = new Date(t);
+          return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        })
+      );
+      const availableTimes = slot.times.filter((t) => {
+        const date = new Date(t);
+        const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        return !bookedTimes.includes(formattedTime);
+      });
+      console.log("Available times after filtering:", availableTimes);
       return { ...slot, times: availableTimes };
     });
 

@@ -6,7 +6,7 @@ import { useDateData } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 import dayjs, { Dayjs } from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 
 const CustomCalendar = () => {
@@ -14,6 +14,11 @@ const CustomCalendar = () => {
   const { setDate } = useDateData();
   const [today, setToday] = useState<Dayjs>(currentDate); // Specify Dayjs type
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+
+  // Reset selectedDate in the global store on component mount
+  useEffect(() => {
+    setDate(null); // No longer needs casting as DateStore now accepts Date | null
+  }, [setDate]);
 
   return (
     <div className="flex flex-col flex-1">
