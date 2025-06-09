@@ -30,7 +30,7 @@ import {
     devtools(
       persist(
         (set, get) => ({
-          lessonType: "CONDUS", // Initial state
+          lessonType: null, // Initial state
   
           setLessonType: (value) => {
             set({ lessonType: value });

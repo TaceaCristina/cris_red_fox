@@ -108,58 +108,66 @@ const TimeSelector = ({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-3">
-      <div>
-        <h3 className="text-center font-bold">Selectează intervalele orare </h3>
-        {selectedDate ? (
-          <ScrollArea className="h-[350px] items-center gap-3">
-            {timesToSelect?.map((time, i) => (
-              <Button
-                key={i}
-                variant="outline"
-                className={`m-1 w-32 border ${
-                  selectedTimesForDate.some(
-                    (selectedTime) => selectedTime.getTime() === time.getTime(),
-                  )
-                    ? "bg-red-500 text-white"
-                    : "border-red-500"
-                }`}
-                onClick={() => handleTimeClick(time)}
-              >
-                {time.getHours().toString().padStart(2, "0")}:
-                {time.getMinutes().toString().padStart(2, "0")}
-              </Button>
-            ))}
-          </ScrollArea>
-        ) : (
-          <p className="text-center text-gray-500 mt-4">
-            Selectează o dată din calendar pentru a vedea intervalele orare disponibile.
-          </p>
-        )}
-      </div>
+      {lessonType ? (
+        <>
+          <div>
+            <h3 className="text-center font-bold">Selectează intervalele orare </h3>
+            {selectedDate ? (
+              <ScrollArea className="h-[350px] items-center gap-3">
+                {timesToSelect?.map((time, i) => (
+                  <Button
+                    key={i}
+                    variant="outline"
+                    className={`m-1 w-32 border ${
+                      selectedTimesForDate.some(
+                        (selectedTime) => selectedTime.getTime() === time.getTime(),
+                      )
+                        ? "bg-red-500 text-white"
+                        : "border-red-500"
+                    }`}
+                    onClick={() => handleTimeClick(time)}
+                  >
+                    {time.getHours().toString().padStart(2, "0")}:
+                    {time.getMinutes().toString().padStart(2, "0")}
+                  </Button>
+                ))}
+              </ScrollArea>
+            ) : (
+              <p className="text-center text-gray-500 mt-4">
+                Selectează o dată din calendar pentru a vedea intervalele orare disponibile.
+              </p>
+            )}
+          </div>
 
-      <div className="space-y-5">
-        <p className="font-bold">
-          Data și intervalele orare selectate sunt după cum urmează:
-          <br />
-          <span className="text-red-600">
-            {" "}
-            {selectedDate ? format(selectedDate, "PPP", { locale: ro }) : "-"}
-          </span>
+          <div className="space-y-5">
+            <p className="font-bold">
+              Data și intervalele orare selectate sunt după cum urmează:
+              <br />
+              <span className="text-red-600">
+                {" "}
+                {selectedDate ? format(selectedDate, "PPP", { locale: ro }) : "-"}
+              </span>
+            </p>
+            <div>
+              {selectedTimesForDate.map((time, index) => (
+                <Badge key={index} variant="outline">
+                  {format(time, "HH:mm")}
+                </Badge>
+              ))}
+            </div>
+            <Button
+              disabled={selectedTimesForDate.length === 0}
+              onClick={submitBooking}
+            >
+              Programează
+            </Button>
+          </div>
+        </>
+      ) : (
+        <p className="col-span-full text-center text-gray-500 mt-4">
+          Selectează tipul ședinței pentru a vedea intervalele orare disponibile.
         </p>
-        <div>
-          {selectedTimesForDate.map((time, index) => (
-            <Badge key={index} variant="outline">
-              {format(time, "HH:mm")}
-            </Badge>
-          ))}
-        </div>
-        <Button
-          disabled={selectedTimesForDate.length === 0}
-          onClick={submitBooking}
-        >
-          Programează
-        </Button>
-      </div>
+      )}
     </div>
   );
 };

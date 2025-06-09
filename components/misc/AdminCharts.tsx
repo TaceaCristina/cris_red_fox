@@ -40,7 +40,7 @@ export function AdminCharts({ bookings, timeSlots }: AdminChartsProps) {
   const occupancyRate = (bookedTimeSlots / totalTimeSlots) * 100;
 
   const occupancyData = [
-    { name: 'Ocupate', value: bookedTimeSlots },
+    { name: 'Rezervate', value: bookedTimeSlots },
     { name: 'Disponibile', value: totalTimeSlots - bookedTimeSlots }
   ];
 
@@ -48,7 +48,7 @@ export function AdminCharts({ bookings, timeSlots }: AdminChartsProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader>
-          <CardTitle>Metoda de plată preferată</CardTitle>
+          <CardTitle>Plăți efectuate: card vs. ramburs</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
@@ -78,7 +78,7 @@ export function AdminCharts({ bookings, timeSlots }: AdminChartsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Tipul de ședințe</CardTitle>
+          <CardTitle>Distribuția preferințelor: condus vs. învățare</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
@@ -108,7 +108,7 @@ export function AdminCharts({ bookings, timeSlots }: AdminChartsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Gradul de ocupare</CardTitle>
+          <CardTitle>Situația programărilor: rezervate vs. disponibile</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">

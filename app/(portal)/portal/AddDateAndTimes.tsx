@@ -162,7 +162,7 @@ const AddDateAndTimes = ({ instructorId }: {instructorId: string; }) => {
                     defaultValue={field.value}
                   >
                     <SelectTrigger className="">
-                      <SelectValue placeholder="tipul ședinței" />
+                      <SelectValue placeholder={field.value ? (field.value === "DRIVING" ? "CONDUS" : "ÎNVĂȚARE") : "Selectează tipul ședinței"} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>

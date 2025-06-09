@@ -7,9 +7,9 @@ export type DateStore = {
   };
   
   export type LessonTypeTypes = {
-    setLessonType: (value: string) => void;
-    getLessonType: () => string;
-    lessonType: string;
+    setLessonType: (value: string | null) => void;
+    getLessonType: () => string | null;
+    lessonType: string | null;
   };
   
   export type BookingToAdd = {
