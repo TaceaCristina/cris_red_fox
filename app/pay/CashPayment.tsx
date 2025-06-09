@@ -31,31 +31,12 @@ const CashPayment = ({ method }: { method: string }) => {
 
       await addBookings({ bookings, payMethod });
       
-      // Log before clearing cart and redirecting
-      // console.log("Bookings before reset:", bookings);
-
-      // Clear the cart and reset state
-      // resetBooking(); // Removed, done above
-      // if (typeof window !== "undefined") {
-      //   localStorage.removeItem("ședințe");
-      // } // Removed, done above
-      // if (useBookingStore.persist && useBookingStore.persist.rehydrate) {
-      //   useBookingStore.persist.rehydrate();
-      // } // Removed, done above
-
-      // Log after clearing cart and before redirect
-      // console.log("Bookings after reset and localStorage clear:", useBookingStore.getState().bookings);
-      // console.log("Attempting to redirect to /user/bookings");
+      // Handle redirection on client side
+      router.push("/user/bookings");
       setLoading(false);
-      // Redirection will now be handled by the server action (addBookings)
-      // router.push("/user/bookings");
-      // setTimeout(() => window.location.reload(), 300);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error);
-      }
+    } catch (error) {
+      console.error("Error:", error);
       setLoading(false);
-      return { message: "An unexpected error occurred." };
     }
   }
 
