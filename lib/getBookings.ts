@@ -1,7 +1,7 @@
 import getSession from "./getSession";
 import prisma from "./prisma";
 
-export async function getUserBookings() {
+export async function getUserBookings(year?: string, type?: string) {
     const session = await getSession();
     const user = session?.user;
     const userId = session?.user?.id as string;
@@ -11,10 +11,23 @@ export async function getUserBookings() {
     }
   
     try {
+      const whereClause: any = {
+        userId,
+      };
+      if (year) {
+        // presupunem că există un câmp 'date' de tip Date în booking
+        const startDate = new Date(Number(year), 0, 1);
+        const endDate = new Date(Number(year) + 1, 0, 1);
+        whereClause.date = {
+          gte: startDate,
+          lt: endDate,
+        };
+      }
+      if (type) {
+        whereClause.type = type;
+      }
       const bookings = await prisma.booking.findMany({
-        where: {
-          userId,
-        },
+        where: whereClause,
         include: {
           instructor: {
             select: {

@@ -9,12 +9,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function BookingsFilter() {
+interface BookingsFilterProps {
+  year: string;
+  type: string;
+}
+
+export default function BookingsFilter({ year, type }: BookingsFilterProps) {
   return (
     <div className="m-auto my-10 max-w-3xl">
-      <form>
+      <form method="GET">
         <div className="flex gap-2">
-          <Select>
+          <Select name="year" defaultValue={year}>
             <SelectTrigger id="year">
               <SelectValue placeholder="Anul" />
             </SelectTrigger>
@@ -26,7 +31,7 @@ export default function BookingsFilter() {
               ))}
             </SelectContent>
           </Select>
-          <Select>
+          <Select name="type" defaultValue={type}>
             <SelectTrigger className="">
               <SelectValue placeholder="Selectează tipul ședinței" />
             </SelectTrigger>

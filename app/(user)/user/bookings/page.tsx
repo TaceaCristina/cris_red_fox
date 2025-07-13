@@ -1,20 +1,20 @@
-import getSession from "@/lib/getSession";
-import { redirect } from "next/navigation";
 import BookingCard from "./BookingCard";
 import BookingsFilter from "./BookingFilter";
 import { getUserBookings } from "@/lib/getBookings";
 
-const UserBookings = async () => {
-  const session = await getSession();
-  const currentUser = session?.user;
+interface UserBookingsProps {
+  searchParams: any;
+}
 
-  if (!currentUser) {
-    redirect("/api/auth/signin?callbackUrl=/user");
-  }
-  const bookings = await getUserBookings();
+const UserBookings = async ({ searchParams }: UserBookingsProps) => {
+  const awaitedSearchParams = await searchParams;
+  const year = awaitedSearchParams.get ? awaitedSearchParams.get('year') : awaitedSearchParams.year || "";
+  const type = awaitedSearchParams.get ? awaitedSearchParams.get('type') : awaitedSearchParams.type || "";
+  const bookings = await getUserBookings(year || undefined, type || undefined);
+
   return (
     <div className="mx-4 md:mx-10">
-      <BookingsFilter />
+      <BookingsFilter year={year} type={type} />
       <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {bookings.map((booking) => (
           <BookingCard
