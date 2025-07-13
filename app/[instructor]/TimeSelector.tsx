@@ -74,8 +74,9 @@ const TimeSelector = ({
     } else {
       cost = lcost;
     }
-    const selectedTimesArray = Object.values(selectedTimes).flat();
-    const correctedTimes = selectedTimesArray.map((time) => {
+    // Folosește DOAR orele pentru ziua curentă
+    const selectedTimesForDate = selectedTimes[format(selectedDate as Date, "yyyy-MM-dd")] || [];
+    const correctedTimes = selectedTimesForDate.map((time) => {
       const day = new Date(selectedDate);
       const fullDate = new Date(day);
       fullDate.setHours(time.getHours());

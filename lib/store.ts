@@ -62,7 +62,8 @@ import {
             const existingBookingIndex = bookings.findIndex(
               (booking) =>
                 booking.date === item.date &&
-                booking.instructorId === item.instructorId,
+                booking.instructorId === item.instructorId &&
+                booking.type === item.type
             );
 
             if (existingBookingIndex !== -1) {

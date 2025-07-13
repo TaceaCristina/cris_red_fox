@@ -67,6 +67,12 @@ type Props = {
 const AddInstructorForm = ({ userId }: Props) => {
     // Router pentru navigare
     const router = useRouter();
+    // Flag pentru a preveni setState după unmount
+    const isMounted = useRef(true);
+    useEffect(() => {
+        isMounted.current = true;
+        return () => { isMounted.current = false; };
+    }, []);
     // State pentru a urmări/afișa încărcarea imaginii
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
@@ -123,7 +129,7 @@ const AddInstructorForm = ({ userId }: Props) => {
 
         const reader = new FileReader();
         reader.onloadend = () => {
-            setImagePreview(reader.result as string);
+            if (isMounted.current) setImagePreview(reader.result as string);
         };
         reader.readAsDataURL(file);
         setValue("image", file);
@@ -131,6 +137,7 @@ const AddInstructorForm = ({ userId }: Props) => {
 
     // Handler pentru trimiterea formularului
     const onSubmit = useCallback(async (values: InstructorValues) => {
+        if (!isMounted.current) return;
         setUploading(true);
         
         try {
@@ -157,6 +164,7 @@ const AddInstructorForm = ({ userId }: Props) => {
 
             const result = await AddInstructor({ formData, areas, userId });
             
+            if (!isMounted.current) return;
             if (result.success) {
                 toast.success("Profilul instructorului a fost adăugat cu succes");
                 router.push("/dashboard/instructors");
@@ -165,9 +173,9 @@ const AddInstructorForm = ({ userId }: Props) => {
             }
         } catch (error) {
             console.error("Eroare la trimiterea formularului:", error);
-            toast.error("A apărut o eroare neașteptată", { duration: 4000 });
+            if (isMounted.current) toast.error("A apărut o eroare neașteptată", { duration: 4000 });
         } finally {
-            setUploading(false);
+            if (isMounted.current) setUploading(false);
         }
     }, [areas, userId, router]);
 
