@@ -47,7 +47,8 @@ export const adminTimeSlotsColumns: ColumnDef<TimeSlots & TableInstructor>[] = [
     header: "Tipul ședinței",
     cell: ({ row }) => {
       const { type } = row.original;
-      return <Badge>{type}</Badge>;
+      const typeLabel = type === "DRIVING" ? "CONDUS" : type === "LEARNERS" ? "ÎNVĂȚARE" : type;
+      return <Badge>{typeLabel}</Badge>;
     },
   },
   {
