@@ -13,18 +13,20 @@ const UserBookings = async ({ searchParams }: UserBookingsProps) => {
   const bookings = await getUserBookings(year || undefined, type || undefined);
 
   return (
-    <div className="mx-4 md:mx-10">
+    <div className="min-h-screen flex flex-col px-2 md:px-10 py-4 bg-background">
       <BookingsFilter year={year} type={type} />
-      <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {bookings.map((booking) => (
-          <BookingCard
-            key={booking.id}
-            booking={booking}
-            name={booking.instructor.name}
-            img={booking.instructor.img as string}
-            phone={booking.instructor.phone as string}
-          />
-        ))}
+      <div className="flex-1 flex flex-col justify-start">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full">
+          {bookings.map((booking) => (
+            <BookingCard
+              key={booking.id}
+              booking={booking}
+              name={booking.instructor.name}
+              img={booking.instructor.img as string}
+              phone={booking.instructor.phone as string}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

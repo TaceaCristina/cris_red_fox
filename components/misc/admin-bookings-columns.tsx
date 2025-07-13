@@ -49,94 +49,114 @@ export const adminBookingsColumns: ColumnDef<BookingWithInstructor>[] = [
   },
   {
     accessorKey: "type",
-    header: "Tipul lecției",
+    id: "type",
+    header: "Tip",
     cell: ({ row }) => {
-      const { type } = row.original;
-      return <Badge>{type}</Badge>;
+      const typeLabel = {
+        DRIVING: "CONDUS",
+        LEARNERS: "ÎNVĂȚARE"
+      }[row.original.type] || row.original.type;
+      return <Badge className="text-xs px-2 py-1">{typeLabel}</Badge>;
     },
+    meta: { className: "whitespace-nowrap" },
   },
   {
     accessorKey: "name",
+    id: "name",
     header: "Utilizator",
+    meta: { className: "whitespace-nowrap" },
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    id: "email",
+    header: "Email",
+    cell: ({ row }) => (
+      <span className="hidden md:inline-block truncate max-w-[120px]">{row.original.user?.email}</span>
+    ),
+    meta: { className: "hidden md:table-cell" },
   },
   {
     accessorKey: "date",
-    header: "Date",
+    id: "date",
+    header: "Data",
     cell: ({ row }) => {
       const { date } = row.original;
       const displayDate = dayjs(date).format("DD.MM.YYYY");
-      return <div>{displayDate}</div>;
+      return <div className="whitespace-nowrap">{displayDate}</div>;
     },
+    meta: { className: "whitespace-nowrap" },
   },
   {
     accessorKey: "bookingNumber",
+    id: "bookingNumber",
     header: "Numărul ședinței",
+    meta: { className: "whitespace-nowrap" },
   },
   {
     accessorKey: "completed",
+    id: "completed",
     header: "Status",
     cell: ({ row }) => {
-      const { status } = row.original;
-
-      return <Badge>{status}</Badge>;
+      const statusLabel = {
+        PENDING: "ÎN AȘTEPTARE",
+        CANCELLED: "ANULATĂ",
+        COMPLETED: "FINALIZATĂ"
+      }[row.original.status] || row.original.status;
+      return <Badge className="text-xs px-2 py-1">{statusLabel}</Badge>;
     },
+    meta: { className: "whitespace-nowrap" },
   },
   {
     accessorKey: "paid",
+    id: "paid",
     header: "Status plată",
     cell: ({ row }) => {
       const { paid } = row.original;
-
       return <div>{paid ? <MdCheck /> : <RxCross2 />}</div>;
     },
+    meta: { className: "whitespace-nowrap" },
   },
   {
     accessorKey: "cost",
+    id: "cost",
     header: "Cost",
+    meta: { className: "whitespace-nowrap" },
   },
   {
-    header: "Taxa de administrare",
+    id: "taxaDeAdministrare",
+    header: "Taxă de administrare",
     cell: ({ row }) => {
       const { cost } = row.original;
       const adminFee = (cost * 0.23).toFixed(2);
-
-      return <div>{adminFee}</div>;
+      return <div className="whitespace-nowrap">{adminFee}</div>;
     },
+    meta: { className: "whitespace-nowrap" },
   },
   {
+    id: "salariuInstructor",
     header: "Salariu instructor",
     cell: ({ row }) => {
       const { cost } = row.original;
       const adminFee = (cost * 0.23).toFixed(2);
       const earnings = cost - parseFloat(adminFee);
-
-      return <div>{earnings}</div>;
+      return <div className="whitespace-nowrap">{earnings}</div>;
     },
+    meta: { className: "whitespace-nowrap" },
   },
   {
     accessorKey: "paymentToken",
+    id: "paymentToken",
     header: "Token plată",
+    cell: ({ row }) => (
+      <span className="hidden lg:inline-block truncate max-w-[80px]">{row.original.paymentToken}</span>
+    ),
+    meta: { className: "hidden lg:table-cell" },
   },
-
   {
-    header: "Mai multe...",
+    id: "maiMulte",
+    header: "Mai multe",
     cell: ({ row }) => {
       const { times, createdAt, updatedAt, instructor } = row.original;
-
       return (
         <DialogWrapper
           isBtn

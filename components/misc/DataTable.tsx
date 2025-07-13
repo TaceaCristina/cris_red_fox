@@ -111,8 +111,8 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table View  */}
-      <div className="rounded-md bg-white dark:bg-black">
-        <Table>
+      <div className="rounded-md bg-white dark:bg-black overflow-x-auto w-full">
+        <Table className="min-w-[1000px] w-full">
           <TableHeader className="sticky top-0 z-10 bg-white dark:bg-slate-900">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
